@@ -23,6 +23,6 @@
   "private": true,
   "repository": "https://github.com/sigopt/sigopt-config.git",
   "scripts": {
-    "test": "NODE_ENV=unit-testing TZ=UTC jest web/js/**"
+    "test": "NODE_ENV=unit-testing TZ=UTC jest src/js/**"
   }
 }

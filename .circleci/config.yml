@@ -5,20 +5,31 @@ commands:
     steps:
       - checkout
       - run: sudo pip install --upgrade pip setuptools
-  unittest:
+  python_test:
     steps:
       - setup
       - run: pip install -r requirements.txt -r requirements-dev.txt
       - run: ./pp pytest ./test/python
+  node_test:
+    steps:
+      - setup
+      - run: yarn install
+      - run: JEST_JUNIT_OUTPUT=junit-results/jest/junit.xml yarn test --reporters=default --reporters=jest-junit --runInBand --ci
 
 jobs:
-  unittest:
+  python_test:
     docker:
       - image: circleci/python:3.10
     steps:
-      - unittest
+      - python_test
+  node_test:
+    docker:
+      - image: circleci/node:18
+    steps:
+      - node_test
 
 workflows:
   main:
     jobs:
-      - unittest
+      - node_test
+      - python_test
