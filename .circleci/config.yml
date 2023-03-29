@@ -1,18 +1,15 @@
 version: 2.1
 
 commands:
-  setup:
+  python_test:
     steps:
       - checkout
       - run: sudo pip install --upgrade pip setuptools
-  python_test:
-    steps:
-      - setup
       - run: pip install -r requirements.txt -r requirements-dev.txt
       - run: ./pp pytest ./test/python
   node_test:
     steps:
-      - setup
+      - checkout
       - run: yarn install
       - run: JEST_JUNIT_OUTPUT=junit-results/jest/junit.xml yarn test --reporters=default --reporters=jest-junit --runInBand --ci
 
