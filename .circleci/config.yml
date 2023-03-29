@@ -1,0 +1,32 @@
+version: 2.1
+
+commands:
+  python_test:
+    steps:
+      - checkout
+      - run: sudo pip install --upgrade pip setuptools
+      - run: pip install -r requirements.txt -r requirements-dev.txt
+      - run: ./pp pytest ./test/python
+  node_test:
+    steps:
+      - checkout
+      - run: npm install
+      - run: JEST_JUNIT_OUTPUT=junit-results/jest/junit.xml ./node_modules/jest/bin/jest.js --reporters=default --reporters=jest-junit --runInBand --ci
+
+jobs:
+  python_test:
+    docker:
+      - image: circleci/python:3.10
+    steps:
+      - python_test
+  node_test:
+    docker:
+      - image: cimg/node:18.14.0
+    steps:
+      - node_test
+
+workflows:
+  main:
+    jobs:
+      - node_test
+      - python_test
