@@ -1,0 +1,25 @@
+{
+  "dependencies": {
+    "es6-promisify": "^5.0.0",
+    "got": "^12.5.3",
+    "lodash": "^4.17.19",
+    "underscore": "^1.12.1"
+  },
+  "devDependencies": {
+    "jest": "^29.3.0"
+  },
+  "jest": {
+    "reporters": [
+      "default",
+      "jest-junit"
+    ],
+    "testEnvironment": "jsdom"
+  },
+  "license": "UNLICENSED",
+  "name": "sigopt-config",
+  "private": true,
+  "repository": "https://github.com/sigopt/sigopt-config.git",
+  "scripts": {
+    "test": "NODE_ENV=unit-testing TZ=UTC jest web/js/**"
+  }
+}
