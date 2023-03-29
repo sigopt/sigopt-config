@@ -9,7 +9,6 @@ commands:
     steps:
       - setup
       - run: pip install -r requirements.txt -r requirements-dev.txt
-      - run: hash -r  # for pytest ?
       - run: ./pp pytest ./test/python
 
 jobs:
