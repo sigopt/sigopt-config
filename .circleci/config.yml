@@ -1,0 +1,20 @@
+version: 2.1
+
+commands:
+  setup:
+    steps:
+      - checkout
+      - sudo pip install --upgrade pip setuptools
+  unittest:
+    steps:
+      - setup
+      - pip install -r requirements.txt -r requirements-dev.txt
+      - hash -r  # for pytest ?
+      - pytest ./test/python
+
+jobs:
+  unittest:
+    docker:
+      - image: circleci/python3.10
+    steps:
+      - unittest
