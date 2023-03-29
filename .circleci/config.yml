@@ -10,8 +10,8 @@ commands:
   node_test:
     steps:
       - checkout
-      - run: yarn install
-      - run: JEST_JUNIT_OUTPUT=junit-results/jest/junit.xml yarn test --reporters=default --reporters=jest-junit --runInBand --ci
+      - run: npm install
+      - run: JEST_JUNIT_OUTPUT=junit-results/jest/junit.xml ./node_modules/jest/bin/jest.js --reporters=default --reporters=jest-junit --runInBand --ci
 
 jobs:
   python_test:
