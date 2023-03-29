@@ -4,13 +4,13 @@ commands:
   setup:
     steps:
       - checkout
-      - sudo pip install --upgrade pip setuptools
+      - run: sudo pip install --upgrade pip setuptools
   unittest:
     steps:
       - setup
-      - pip install -r requirements.txt -r requirements-dev.txt
-      - hash -r  # for pytest ?
-      - pytest ./test/python
+      - run: pip install -r requirements.txt -r requirements-dev.txt
+      - run: hash -r  # for pytest ?
+      - run: pytest ./test/python
 
 jobs:
   unittest:
