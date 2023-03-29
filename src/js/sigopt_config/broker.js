@@ -83,8 +83,7 @@ class ConfigBroker {
         engine: this.get("vault.engine"),
         host: this.get("vault.host"),
         keyPrefix: this.get("vault.key_prefix"),
-        // NOTE(patrick): vault.token is not specified in prod, but can be included for dev
-        // You can get the root vault token from 1password, but be very careful with it since it has all privileges
+        // NOTE: vault.token is not specified in prod, but can be included for dev
         token: this.get("vault.token"),
       });
       this._sources.push(source);
