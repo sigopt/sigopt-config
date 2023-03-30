@@ -13,7 +13,7 @@ import {AWS_METADATA_URL} from "./constants";
 
 export default class VaultSource {
   constructor(options) {
-    this._nonce_path = options.noncePath;
+    this._noncePath = options.noncePath;
     this._certificate = null;
     this._engine = options.engine || "secret";
     this._host = options.host;
@@ -66,7 +66,7 @@ export default class VaultSource {
     return promisify(
       fs.readFile,
       fs,
-    )(this.nonce_path)
+    )(this._noncePath)
       .then((data) => data.toString("utf8"))
       .catch((err) =>
         err.code === "ENOENT" ? Promise.resolve(null) : Promise.reject(err),
@@ -75,7 +75,7 @@ export default class VaultSource {
 
   _persistNonce(nonce) {
     const cleanup = promisify(fs.close, fs);
-    return promisify(fs.open, fs)(this.nonce_path, "wx", 0o600)
+    return promisify(fs.open, fs)(this._noncePath, "wx", 0o600)
       .then((fd) =>
         promisify(fs.write, fs)(fd, nonce).then(
           () => cleanup(fd),
