@@ -23,16 +23,12 @@ class AwsLogin(VaultLogin):
 
   should_retry = True
 
-  # NOTE: While the codebase is checked out in /home/ubuntu, we put this in the
-  # `/home/produser` directory to ensure that it is readable by `produser` and does
-  # not require sudo access
-  NONCE_PATH = "/home/produser/.vault-nonce"
-
   def get_auth_path(self, vault_config):
     return "aws"
 
   def get_login_data(self, vault_config):
-    nonce = self._get_nonce()
+    nonce_path = vault_config["nonce_path"]
+    nonce = self._get_nonce(nonce_path)
     pkcs7 = self._get_pkcs7()
     role = self._get_role()
     return {
@@ -49,9 +45,9 @@ class AwsLogin(VaultLogin):
     # this state, you may need to delete the instance from the identity-accesslist in vault
     return self._fetch_nonce()
 
-  def _fetch_nonce(self):
-    if os.path.exists(self.NONCE_PATH):
-      with open(self.NONCE_PATH, "r") as f:
+  def _fetch_nonce(self, nonce_path):
+    if os.path.exists(nonce_path):
+      with open(nonce_path, "r") as f:
         nonce = f.read().strip()
         assert nonce
         return nonce
