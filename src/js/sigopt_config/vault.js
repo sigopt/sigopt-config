@@ -12,22 +12,15 @@ import {AWS_METADATA_URL} from "./constants";
 
 
 export default class VaultSource {
-  VAULT_SECRET_KEYS = [
-    "airbrake_node",
-    "airbrake_web",
-    "recaptcha",
-    "saml",
-    "segment",
-  ];
-
   constructor(options) {
-    this.NONCE_PATH = `${os.homedir()}/.vault-nonce`;
+    this._nonce_path = options.noncePath;
     this._certificate = null;
     this._engine = options.engine || "secret";
     this._host = options.host;
     this._keyPrefix = options.keyPrefix;
     this._token = options.token;
     this._underlying = null;
+    this._vaultSecretKeys = options.vaultSecretKeys;
   }
 
   initialize(success, error) {
@@ -73,7 +66,7 @@ export default class VaultSource {
     return promisify(
       fs.readFile,
       fs,
-    )(this.NONCE_PATH)
+    )(this.nonce_path)
       .then((data) => data.toString("utf8"))
       .catch((err) =>
         err.code === "ENOENT" ? Promise.resolve(null) : Promise.reject(err),
@@ -82,7 +75,7 @@ export default class VaultSource {
 
   _persistNonce(nonce) {
     const cleanup = promisify(fs.close, fs);
-    return promisify(fs.open, fs)(this.NONCE_PATH, "wx", 0o600)
+    return promisify(fs.open, fs)(this.nonce_path, "wx", 0o600)
       .then((fd) =>
         promisify(fs.write, fs)(fd, nonce).then(
           () => cleanup(fd),
@@ -107,8 +100,8 @@ export default class VaultSource {
     return this._request("list", this._secretPath("", "metadata"))
       .then((response) => _.reject(response.data.keys, (k) => k.endsWith("/")))
       .then((keys) => {
-        const blockedKeys = _.difference(keys, this.VAULT_SECRET_KEYS);
-        const fetchPromises = _.map(this.VAULT_SECRET_KEYS, (key) =>
+        const blockedKeys = _.difference(keys, this._vaultSecretKeys);
+        const fetchPromises = _.map(this._vaultSecretKeys, (key) =>
           this._request("get", this._secretPath(key))
             .then((response) => response.data.data)
             .then((data) => [key, data]),

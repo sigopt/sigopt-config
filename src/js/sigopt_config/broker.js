@@ -8,11 +8,12 @@ import VaultSource from "./vault";
 import {coalesce, isDefinedAndNotNull, isJsObject} from "./utils";
 
 class ConfigBroker {
-  constructor(sources) {
+  constructor(sources, vaultSecretKeys) {
     this._sources = sources;
+    this._vaultSecretKeys = vaultSecretKeys;
   }
 
-  static fromFile(config) {
+  static fromFile(config, vaultSecretKeys) {
     const sources = [];
     let extend = config;
     while (isDefinedAndNotNull(extend)) {
@@ -31,7 +32,7 @@ class ConfigBroker {
       }
     }
     sources.push(new EnvironmentSource());
-    return new ConfigBroker(sources);
+    return new ConfigBroker(sources, vaultSecretKeys);
   }
 
   initialize(success, error) {
@@ -83,8 +84,10 @@ class ConfigBroker {
         engine: this.get("vault.engine"),
         host: this.get("vault.host"),
         keyPrefix: this.get("vault.key_prefix"),
+        noncePath: this.get("vault.nonce_path"),
         // NOTE: vault.token is not specified in prod, but can be included for dev
         token: this.get("vault.token"),
+        vaultSecretKeys: this._vaultSecretKeys,
       });
       this._sources.push(source);
       return source.initialize(success, error);
