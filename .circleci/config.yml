@@ -1,6 +1,9 @@
 version: 2.1
 
 commands:
+  install-trivy:
+    steps:
+      - run: curl -fSsLo trivy.deb https://github.com/aquasecurity/trivy/releases/download/v0.38.3/trivy_0.38.3_Linux-64bit.deb && sudo dpkg -i trivy.deb && rm trivy.deb
   python_test:
     steps:
       - checkout
@@ -24,9 +27,20 @@ jobs:
       - image: cimg/node:18.14.0
     steps:
       - node_test
+  trivy-scan-project:
+    docker:
+      - image: cimg/base:stable
+    resource_class: small
+    steps:
+      - checkout
+      - install-trivy
+      - run: mkdir -p artifacts/trivy && trivy fs . --debug
+      - store_artifacts:
+          path: artifacts/trivy/
 
 workflows:
   main:
     jobs:
       - node_test
       - python_test
+      - trivy-scan-project
