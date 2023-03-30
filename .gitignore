@@ -6,3 +6,4 @@ node_modules/
 
 # local testing output
 junit.xml
+artifacts/
