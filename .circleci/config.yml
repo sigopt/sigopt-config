@@ -29,7 +29,7 @@ jobs:
       - node_test
   trivy-scan-project:
     docker:
-      - image: cimg/node:18.14.0
+      - image: cimg/base:stable
     resource_class: small
     steps:
       - checkout
