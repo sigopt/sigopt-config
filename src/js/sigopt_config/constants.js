@@ -1,3 +1,9 @@
+/**
+ * Copyright © 2023 Intel Corporation
+ *
+ * SPDX-License-Identifier: Apache License 2.0
+ */
+
 // https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instance-identity-documents.html
 // http://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-instance-metadata.html
 export const AWS_METADATA_URL = "http://169.254.169.254/latest";

@@ -1,3 +1,6 @@
+# Copyright © 2023 Intel Corporation
+#
+# SPDX-License-Identifier: Apache License 2.0
 import pytest
 from sigopt_config.broker import *
 from sigopt_config.source import ConfigBrokerValueNotAvailableException
