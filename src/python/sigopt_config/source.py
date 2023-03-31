@@ -1,3 +1,6 @@
+# Copyright © 2023 Intel Corporation
+#
+# SPDX-License-Identifier: Apache License 2.0
 import os
 
 from sigopt_config.utils import is_mapping

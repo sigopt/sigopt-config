@@ -1,3 +1,9 @@
+/**
+ * Copyright © 2023 Intel Corporation
+ *
+ * SPDX-License-Identifier: Apache License 2.0
+ */
+
 // NOTE: do we catch by class, and so need to use this base-class in sigopt-server?
 export default class SigoptError extends Error {
   chain(causedBy) {

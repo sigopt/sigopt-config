@@ -1,3 +1,9 @@
+<!--
+Copyright © 2023 Intel Corporation
+
+SPDX-License-Identifier: Apache License 2.0
+-->
+
 # Security Policy
 Intel is committed to rapidly addressing security vulnerabilities affecting our customers and providing clear guidance on the solution, impact, severity and mitigation.
 

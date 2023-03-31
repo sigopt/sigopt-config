@@ -1,3 +1,6 @@
+# Copyright © 2023 Intel Corporation
+#
+# SPDX-License-Identifier: Apache License 2.0
 from sigopt_config.source import MutableConfigBrokerSource, SecretConfigBrokerSource
 from sigopt_config.vault_secrets.client import VaultClient
 

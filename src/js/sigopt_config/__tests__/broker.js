@@ -1,3 +1,9 @@
+/**
+ * Copyright © 2023 Intel Corporation
+ *
+ * SPDX-License-Identifier: Apache License 2.0
+ */
+
 import ConfigBroker from "../broker";
 import ObjectSource from "../object";
 import {ConfigBrokerValueNotAvailableException} from "../exceptions";
