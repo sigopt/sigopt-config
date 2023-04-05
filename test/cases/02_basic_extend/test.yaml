@@ -1,0 +1,10 @@
+get:
+  - key: address.api_url
+    expected: https://test.sigopt.ninja
+  - key: db.host
+    expected: postgres
+get_object:
+  - key: address
+    expected: {"api_url": "https://test.sigopt.ninja"}
+  - key: db
+    expected: {"host": "postgres"}
