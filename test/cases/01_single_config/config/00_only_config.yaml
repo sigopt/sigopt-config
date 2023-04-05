@@ -1,0 +1,4 @@
+address:
+  api_url: https://test.sigopt.ninja
+db:
+  host: postgres

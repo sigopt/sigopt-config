@@ -119,6 +119,7 @@ class DictConfigBrokerSource(ConfigBrokerSource):
     parts = self._split_name(name)
 
     for p in parts[:-1]:
+      print(base_dict, p)
       base_dict = base_dict.get(p)
       if base_dict is _NOT_AVAILABLE:
         raise ConfigBrokerValueNotAvailableException()

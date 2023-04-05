@@ -5,6 +5,8 @@ import json
 import logging
 import os
 
+import yaml
+
 from sigopt_config.source import (
   ConfigBrokerSource,
   DictConfigBrokerSource,
@@ -81,6 +83,14 @@ class ConfigBroker(object):
       broker.include_vault(vault_secret_keys=vault_secret_keys)
 
     return broker
+
+  @classmethod
+  def from_directory(cls, dirname, vault_secret_keys=None, include_vault=True):
+    configs = []
+    for config_path in sorted(os.listdir(dirname)):
+      with open(os.path.join(dirname, config_path)) as config_fp:
+        configs.append(yaml.safe_load(config_fp))
+    return cls.from_configs(configs, vault_secret_keys=vault_secret_keys, include_vault=include_vault)
 
   @classmethod
   def from_file(cls, filename, vault_secret_keys=None, include_vault=True):

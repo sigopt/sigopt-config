@@ -7,3 +7,7 @@ node_modules/
 # local testing output
 junit.xml
 artifacts/
+
+# virtual environments
+.venv/
+venv/
