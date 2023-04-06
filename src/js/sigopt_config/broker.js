@@ -98,10 +98,6 @@ class ConfigBroker {
     values.reverse();
     return _.isEmpty(values) ? defaultValue : _.extend({}, ...values);
   }
-
-  allConfigsForLogging() {
-    return _.map(this._sources, (source) => source.allConfigsForLogging());
-  }
 }
 
 export default ConfigBroker;

@@ -79,8 +79,4 @@ export default class ObjectSource {
   setNotAvailable(key) {
     setDottedNameFromObject(this._config, key, NOT_AVAILABLE);
   }
-
-  allConfigsForLogging() {
-    return this._config;
-  }
 }

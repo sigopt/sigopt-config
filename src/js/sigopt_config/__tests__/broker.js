@@ -37,23 +37,6 @@ describe("ConfigBroker", () => {
         d: "e",
         y: "z",
       });
-      expect(broker.allConfigsForLogging()).toEqual([
-        {
-          a: {
-            b: "c",
-            d: "e",
-          },
-          not: {
-            available: NOT_AVAILABLE,
-          },
-        },
-        {
-          a: {
-            b: "f",
-            y: "z",
-          },
-        },
-      ]);
       done();
     }, done.fail);
   });
