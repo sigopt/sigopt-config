@@ -12,21 +12,18 @@ let dispatchP = Promise.resolve(null);
 let configBroker = null;
 
 const loadConfigBroker = ({directory}) => {
-  dispatchP = dispatchP.then(() => ConfigBroker.fromDirectory(directory).then((broker) => new Promise((success, error) =>
-    broker.initialize(
-      () => {
+  dispatchP = dispatchP.then(() => {
+    return ConfigBroker.fromDirectory(directory).then((broker) => {
         configBroker = broker;
         console.log(JSON.stringify({message: `Loaded broker from ${directory}`}));
         return success(null);
       },
-      error,
-    )
-  ),
-    (err) => {
-      console.log(JSON.stringify({error: `Error loading broker from ${directory}: ${err}`}));
-      console.error(err);
-    },
-  ));
+      (err) => {
+        console.log(JSON.stringify({error: `Error loading broker from ${directory}: ${err}`}));
+        console.error(err);
+      },
+    );
+  });
 };
 
 const readConfigBroker = ({method, key}) => {
@@ -67,11 +64,11 @@ readlineInterface.on("line", (line) => {
   try {
     command = JSON.parse(line);
   } catch (err) {
-    console.log(JSON.stringify({error: `Could not parse JSON command: ${command}`}));
+    console.log(JSON.stringify({error: `Could not parse JSON command: ${line}`}));
     console.error(err);
     return;
   }
-  const dispatch = ({
+  const runCommand = ({
     load: loadConfigBroker,
     read: readConfigBroker,
     reset: resetConfigBroker,
@@ -80,5 +77,9 @@ readlineInterface.on("line", (line) => {
       process.exit();
     },
   })[command.command];
-  dispatch(command);
+  if (!runCommand) {
+    console.log(JSON.stringify({error: `Unknown command: ${command.command}`}));
+    return;
+  }
+  runCommand(command);
 });
