@@ -5,6 +5,7 @@ import functools
 import json
 import os
 
+import jmespath
 import json_merge_patch
 import yaml
 
@@ -45,18 +46,7 @@ class ConfigBroker(object):
       return default
 
   def __getitem__(self, name):
-    base_dict = self.data
-    parts = self._split_name(name)
-
-    for p in parts[:-1]:
-      base_dict = base_dict.get(p)
-      if not is_mapping(base_dict):
-        raise KeyError(name)
-
-    if is_mapping(base_dict):
-      try:
-        return base_dict[parts[-1]]
-      except KeyError as ke:
-        raise KeyError(name) from ke
-
-    raise KeyError(name)
+    value = jmespath.search(name, self.data)
+    if value is None:
+      raise KeyError(name)
+    return value

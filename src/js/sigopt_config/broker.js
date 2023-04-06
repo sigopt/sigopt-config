@@ -9,30 +9,9 @@ import fs from "fs";
 import path from "path";
 import {parse as parseYAML} from "yaml";
 import jsonMergePatch from "json-merge-patch";
+import jmespath from "jmespath";
 
 const readYAMLFile = (filepath) => parseYAML(fs.readFileSync(filepath).toString());
-
-const dottedNameParts = (key) => key.split(".");
-
-const getDottedNameFromObject = (object, key) => {
-  const parts = dottedNameParts(key);
-  const prefix = _.initial(parts);
-  const suffix = _.last(parts);
-  const parentObject = _.reduce(
-    prefix,
-    (memo, part) => {
-      if (!_.isObject(memo)) {
-        return memo;
-      }
-      return memo[part];
-    },
-    object,
-  );
-  if (typeof parentObject === "undefined") {
-    return undefined;
-  }
-  return parentObject[suffix];
-};
 
 class ConfigBroker {
   static fromConfigs(configs) {
@@ -64,7 +43,7 @@ class ConfigBroker {
   }
 
   get(key, defaultValue) {
-    const value = getDottedNameFromObject(this.data, key);
+    const value = jmespath.search(this.data, key);
     return typeof value === "undefined" ? defaultValue : value;
   }
 }
