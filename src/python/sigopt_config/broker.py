@@ -52,29 +52,16 @@ class ConfigBroker(object):
 
 
 class ConfigBrokerImpl(object):
-  def __init__(self, sources):
-    self.sources = sources
+  def __init__(self, source):
+    self.source = source
 
   def get(self, name, default):
-    return self._get(name, default)[0]
-
-  def _get(self, name, default):
-    for source in self.sources:
-      if name in source:
-        ret = source.get(name, default)
-        self._ensure_safe_return(ret)
-        return ret, source
-    return default, None
+    value = self.source.get(name, default)
+    self._ensure_safe_return(value)
+    return value
 
   def get_object(self, name, default):
-    objs = []
-    for source in self.sources:
-      if name in source:
-        our_default = object()
-        ret = source.get(name, our_default)
-        assert ret is not our_default
-        objs.append(ret)
-    return extend_dict({}, *reversed(objs)) if objs else default
+    return self.source.get(name, default)
 
   def _ensure_safe_return(self, val):
     if is_mapping(val):

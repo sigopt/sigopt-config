@@ -6,14 +6,6 @@ import os
 from sigopt_config.utils import is_mapping
 
 
-class _NotAvailableClass(object):
-  def __repr__(self):
-    return "NotAvailable"
-
-
-_NOT_AVAILABLE = _NotAvailableClass()
-
-
 class ConfigBrokerSource(object):
   def __init__(self, d):
     self.d = d
@@ -22,45 +14,31 @@ class ConfigBrokerSource(object):
     return name.split(".")
 
   def __contains__(self, name):
-    return self._do_get(name, default=None)[0]
+    try:
+      self._do_get(name)
+      return True
+    except KeyError:
+      return False
 
   def get(self, name, default=None):
-    return self._do_get(name, default)[1]
+    try:
+      return self._do_get(name)
+    except KeyError:
+      return default
 
-  def _remove_unavailable(self, value):
-    if is_mapping(value):
-      return {k: "_NOT_AVAILABLE" if v is _NOT_AVAILABLE else self._remove_unavailable(v) for k, v in value.items()}
-    return value
-
-  def _do_get(self, name, default):
-    # Returns a tuple (did_contain, value), so we can distinguish between
-    # null being explicitly present or not
-
+  def _do_get(self, name):
     base_dict = self.d
     parts = self._split_name(name)
 
     for p in parts[:-1]:
       base_dict = base_dict.get(p)
-      if base_dict is _NOT_AVAILABLE:
-        raise ConfigBrokerValueNotAvailableException()
       if not is_mapping(base_dict):
-        return (False, None)
+        raise KeyError(name)
 
     if is_mapping(base_dict):
-      did_contain = parts[-1] in base_dict
-      value = base_dict.get(parts[-1], default)
-      self._raise_on_not_available(value)
-      return (did_contain, value)
-    else:
-      return (False, None)
+      try:
+        return base_dict[parts[-1]]
+      except KeyError as ke:
+        raise KeyError(name) from ke
 
-  def _raise_on_not_available(self, value):
-    if value is _NOT_AVAILABLE:
-      raise ConfigBrokerValueNotAvailableException()
-    if is_mapping(value):
-      for v in value.values():
-        self._raise_on_not_available(v)
-
-
-class ConfigBrokerValueNotAvailableException(KeyError):
-  pass
+    raise KeyError(name)

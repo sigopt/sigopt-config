@@ -16,6 +16,9 @@
     "jest-junit": "^14.0.1"
   },
   "jest": {
+    "moduleNameMapper": {
+      "^yaml$": "<rootDir>/node_modules/yaml/dist"
+    },
     "reporters": [
       "default",
       "jest-junit"

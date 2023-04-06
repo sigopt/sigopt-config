@@ -16,7 +16,6 @@ const loadConfigBroker = ({directory}) => {
     return ConfigBroker.fromDirectory(directory).then((broker) => {
         configBroker = broker;
         console.log(JSON.stringify({message: `Loaded broker from ${directory}`}));
-        return success(null);
       },
       (err) => {
         console.log(JSON.stringify({error: `Error loading broker from ${directory}: ${err}`}));

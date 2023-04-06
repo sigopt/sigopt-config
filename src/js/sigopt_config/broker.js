@@ -20,20 +20,26 @@ class ConfigBroker {
     this.source = source;
   }
 
+  static fromConfigs(configs) {
+    const reversed = [...configs];
+    reversed.reverse();
+    const data = _.reduce(reversed, jsonMergePatch.apply, {});
+    return new ConfigBroker(new ObjectSource(data));
+  }
+
   static fromDirectory(dir) {
     return new Promise((success, error) => {
       fs.readdir(dir, (err, files) => {
         if (err) {
           return error(err);
         }
+        let configs;
         try {
-          const configs = _.map(files, (file) => readYAMLFile(path.join(dir, file)));
+          configs = _.map(files, (file) => readYAMLFile(path.join(dir, file)));
         } catch (err) {
           return error(err);
         }
-        const data = _.reduce(configs, jsonMergePatch.apply, {});
-        const source = new ObjectSource(data);
-        return success(new ConfigBroker(source));
+        return success(ConfigBroker.fromConfigs(configs));
       });
     });
   }

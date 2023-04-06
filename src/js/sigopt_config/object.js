@@ -6,44 +6,26 @@
 
 import _ from "underscore";
 
-import {ConfigBrokerValueNotAvailableException} from "./exceptions";
-import {NOT_AVAILABLE} from "./constants";
-
 const dottedNameParts = (key) => key.split(".");
-const dottedNamePrefix = (key) => _.initial(dottedNameParts(key));
-const dottedNameSuffix = (key) => _.last(dottedNameParts(key));
-
-const containsNotAvailable = (val) => {
-  if (val === NOT_AVAILABLE) {
-    return true;
-  } else if (_.isArray(val)) {
-    return _.any(val, containsNotAvailable);
-  } else if (_.isObject(val)) {
-    return containsNotAvailable(_.values(val));
-  } else {
-    return false;
-  }
-};
 
 const getDottedNameFromObject = (object, key) => {
-  const prefix = dottedNamePrefix(key);
-  const suffix = dottedNameSuffix(key);
+  const parts = dottedNameParts(key);
+  const prefix = _.initial(parts);
+  const suffix = _.last(parts);
   const parentObject = _.reduce(
     prefix,
     (memo, part) => {
-      if (memo === NOT_AVAILABLE) {
+      if (!memo) {
         return memo;
       }
-      return memo[part] || {};
+      return memo[part];
     },
     object,
   );
-  const value =
-    parentObject === NOT_AVAILABLE ? NOT_AVAILABLE : parentObject[suffix];
-  if (containsNotAvailable(value)) {
-    throw new ConfigBrokerValueNotAvailableException(key);
+  if (!parentObject) {
+    return undefined;
   }
-  return value;
+  return parentObject[suffix];
 };
 
 const setDottedNameFromObject = (object, key, value) => {
@@ -53,9 +35,6 @@ const setDottedNameFromObject = (object, key, value) => {
     prefix,
     (memo, part) => {
       memo[part] = memo[part] || {};
-      if (memo[part] === NOT_AVAILABLE) {
-        throw new ConfigBrokerValueNotAvailableException(key);
-      }
       return memo[part];
     },
     object,
@@ -65,18 +44,10 @@ const setDottedNameFromObject = (object, key, value) => {
 
 export default class ObjectSource {
   constructor(obj) {
-    this._config = obj;
-  }
-
-  initialize(success) {
-    success();
+    this.config = obj;
   }
 
   get(key) {
-    return getDottedNameFromObject(this._config, key);
-  }
-
-  setNotAvailable(key) {
-    setDottedNameFromObject(this._config, key, NOT_AVAILABLE);
+    return getDottedNameFromObject(this.config, key);
   }
 }
