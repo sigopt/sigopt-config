@@ -53,8 +53,8 @@ class TestConfigBroker(object):
 
     broker = self.make_broker(
       [
-        DictConfigBrokerSource(dict1),
-        DictConfigBrokerSource(dict2),
+        ConfigBrokerSource(dict1),
+        ConfigBrokerSource(dict2),
       ]
     )
 
@@ -104,8 +104,8 @@ class TestConfigBroker(object):
 
     broker = self.make_broker(
       [
-        DictConfigBrokerSource(dict1),
-        DictConfigBrokerSource(dict2),
+        ConfigBrokerSource(dict1),
+        ConfigBrokerSource(dict2),
       ]
     )
 

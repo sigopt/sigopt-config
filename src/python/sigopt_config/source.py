@@ -15,44 +15,11 @@ _NOT_AVAILABLE = _NotAvailableClass()
 
 
 class ConfigBrokerSource(object):
-  supports_types = True
+  def __init__(self, d):
+    self.d = d
 
   def _split_name(self, name):
     return name.split(".")
-
-  def __contains__(self, name):
-    raise NotImplementedError()
-
-  def get(self, name, default=None):
-    raise NotImplementedError()
-
-
-class DecoratorConfigBrokerSource(ConfigBrokerSource):
-  def __init__(self, underlying):
-    super().__init__()
-    self.underlying = underlying
-
-  def __contains__(self, name):
-    return self.underlying.__contains__(name)
-
-  def get(self, name, default=None):
-    return self.underlying.get(name, default=default)
-
-
-class SecretConfigBrokerSource(DecoratorConfigBrokerSource):
-  supports_types = True
-
-
-class ConfigBrokerValueNotAvailableException(KeyError):
-  pass
-
-
-class DictConfigBrokerSource(ConfigBrokerSource):
-  supports_types = True
-
-  def __init__(self, d):
-    super().__init__()
-    self.d = d
 
   def __contains__(self, name):
     return self._do_get(name, default=None)[0]
@@ -73,7 +40,6 @@ class DictConfigBrokerSource(ConfigBrokerSource):
     parts = self._split_name(name)
 
     for p in parts[:-1]:
-      print(base_dict, p)
       base_dict = base_dict.get(p)
       if base_dict is _NOT_AVAILABLE:
         raise ConfigBrokerValueNotAvailableException()
@@ -94,3 +60,7 @@ class DictConfigBrokerSource(ConfigBrokerSource):
     if is_mapping(value):
       for v in value.values():
         self._raise_on_not_available(v)
+
+
+class ConfigBrokerValueNotAvailableException(KeyError):
+  pass
