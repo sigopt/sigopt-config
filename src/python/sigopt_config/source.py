@@ -74,18 +74,6 @@ class SecretConfigBrokerSource(DecoratorConfigBrokerSource):
     return {k: "*****" for k in self.underlying.all_configs_for_logging()}
 
 
-class EnvironmentConfigBrokerSource(DecoratorConfigBrokerSource):
-  supports_types = False
-  PREFIX = "sigopt."
-
-  def __init__(self):
-    super().__init__(MutableConfigBrokerSource())
-    for k, v in os.environ.items():
-      if k.startswith(self.PREFIX):
-        k = k[len(self.PREFIX):]
-        self.underlying.set_item(k, v)
-
-
 class ConfigBrokerValueNotAvailableException(KeyError):
   pass
 

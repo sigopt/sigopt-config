@@ -12,7 +12,6 @@ import yaml
 from sigopt_config.source import (
   ConfigBrokerSource,
   DictConfigBrokerSource,
-  EnvironmentConfigBrokerSource,
   MutableConfigBrokerSource,
 )
 from sigopt_config.utils import extend_dict, is_mapping, user_input_to_bool
@@ -78,7 +77,6 @@ class ConfigBroker(object):
     merged_config = functools.reduce(json_merge_patch.merge, reversed(configs), {})
     sources = [
       DictConfigBrokerSource(merged_config),
-      EnvironmentConfigBrokerSource(),
     ]
 
     broker = cls(sources)

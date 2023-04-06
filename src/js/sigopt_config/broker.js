@@ -10,7 +10,6 @@ import path from "path";
 import {parse as parseYAML} from "yaml";
 import jsonMergePatch from "json-merge-patch";
 
-import EnvironmentSource from "./env";
 import ObjectSource from "./object";
 import VaultSource from "./vault";
 import {coalesce, isDefinedAndNotNull, isJsObject} from "./utils";
@@ -32,7 +31,7 @@ class ConfigBroker {
         const sources = _.map(files, (file) => readYAMLFile(path.join(dir, file)));
         const data = _.reduce(sources, jsonMergePatch.apply, {});
         const source = new ObjectSource(data);
-        return success(new ConfigBroker([source, new EnvironmentSource()], vaultSecretKeys));
+        return success(new ConfigBroker([source], vaultSecretKeys));
       });
     });
   }
@@ -56,7 +55,7 @@ class ConfigBroker {
       }
     }
     const data = _.reduce(sources, jsonMergePatch.apply, {});
-    return new ConfigBroker([new ObjectSource(data), new EnvironmentSource()], vaultSecretKeys);
+    return new ConfigBroker([new ObjectSource(data)], vaultSecretKeys);
   }
 
   initialize(success, error) {
