@@ -1,15 +1,28 @@
-version: 2.1
+version: '2.1'
+
+orbs:
+  node: circleci/node@x.y
 
 commands:
   install-trivy:
     steps:
       - run: curl -fSsLo trivy.deb https://github.com/aquasecurity/trivy/releases/download/v0.38.3/trivy_0.38.3_Linux-64bit.deb && sudo dpkg -i trivy.deb && rm trivy.deb
+  combined_test:
+    steps:
+      - node/install:
+          install-yarn: false
+          node-version: '18.14.0'
+      - checkout
+      - run: npm install
+      - run: sudo pip install --upgrade pip setuptools
+      - run: pip install -r requirements.txt -r requirements-dev.txt
+      - run: ./pp pytest test/config_test.py
   python_test:
     steps:
       - checkout
       - run: sudo pip install --upgrade pip setuptools
       - run: pip install -r requirements.txt -r requirements-dev.txt
-      - run: ./pp pytest
+      - run: ./pp pytest test/python
   node_test:
     steps:
       - checkout
@@ -17,6 +30,11 @@ commands:
       - run: JEST_JUNIT_OUTPUT=junit-results/jest/junit.xml npx jest --reporters=default --reporters=jest-junit --runInBand --ci
 
 jobs:
+  combined_test:
+    docker:
+      - image: circleci/python:3.10
+    steps:
+      - combined_test
   python_test:
     docker:
       - image: circleci/python:3.10
@@ -41,6 +59,7 @@ jobs:
 workflows:
   main:
     jobs:
+      - combined_test
       - node_test
       - python_test
       - trivy-scan-project
