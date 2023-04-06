@@ -9,7 +9,7 @@ commands:
       - checkout
       - run: sudo pip install --upgrade pip setuptools
       - run: pip install -r requirements.txt -r requirements-dev.txt
-      - run: ./pp pytest ./test/python
+      - run: ./pp pytest
   node_test:
     steps:
       - checkout
