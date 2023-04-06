@@ -8,7 +8,6 @@ import yaml
 from sigopt_config.broker import ConfigBroker
 
 cases_root_path = os.path.join(".", "test", "cases")
-supported_methods = ["get", "get_object"]
 
 def generate_test_cases():
   case_names = os.listdir(cases_root_path)
@@ -22,34 +21,30 @@ def generate_test_cases():
     assert not ls, f"Extra files found in test case {case_name}: {ls}"
     with open(os.path.join(case_path, "test.yaml")) as test_config_fp:
       test_config = yaml.safe_load(test_config_fp)
-    for method in supported_methods:
-      method_cases = test_config.pop(method, None)
-      if method_cases is None:
-        continue
-      assert isinstance(method_cases, list)
-      for method_case in method_cases:
-        assert isinstance(method_case, dict)
-        key = method_case.pop("key")
-        assert isinstance(key, str)
-        expected = method_case.pop("expected")
-        cases.append([case_name, method, key, expected])
-    assert not test_config, f"Unused tests in {case_name}: {test_config}"
+    assert isinstance(test_config, list)
+    for case in test_config:
+      assert isinstance(case, dict)
+      key = case.pop("key")
+      assert isinstance(key, str)
+      expected = case.pop("expected")
+      assert not case, f"Extra arguments found in test case {case_name}: {case}"
+      cases.append([case_name, key, expected])
   return cases
 
 class ConfigTest:
-  @pytest.mark.parametrize("case_name,method,key,expected", generate_test_cases())
-  def test_load_config(self, case_name, method, key, expected):
+  @pytest.mark.parametrize("case_name,key,expected", generate_test_cases())
+  def test_load_config(self, case_name, key, expected):
     config_dir = os.path.join(cases_root_path, case_name, "config")
-    result = self.load_config_value(config_dir, method, key)
+    result = self.load_config_value(config_dir, key)
     assert result == expected
 
 class TestPythonConfigBroker(ConfigTest):
   def load_broker(self, config_dir):
     return ConfigBroker.from_directory(config_dir)
 
-  def load_config_value(self, config_dir, method, key):
+  def load_config_value(self, config_dir, key):
     broker = self.load_broker(config_dir)
-    return getattr(broker, method)(key)
+    return broker.get(key)
 
 class TestJsConfigBroker(ConfigTest):
   broker_proc = None
@@ -77,10 +72,10 @@ class TestJsConfigBroker(ConfigTest):
     assert "error" not in response, response["error"]
     return response
 
-  def load_config_value(self, config_dir, method, key):
+  def load_config_value(self, config_dir, key):
     self.exec_command("load", directory=config_dir)
     try:
-      value = self.exec_command("read", method=method, key=key).get("value")
+      value = self.exec_command("get", key=key).get("value")
     finally:
       self.exec_command("reset")
     return value

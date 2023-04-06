@@ -25,22 +25,14 @@ const loadConfigBroker = ({directory}) => {
   });
 };
 
-const readConfigBroker = ({method, key}) => {
+const readConfigBroker = ({key}) => {
   dispatchP = dispatchP.then(() => {
     if (!configBroker) {
       console.log(JSON.stringify({error: `Error reading from broker: broker not loaded`}));
       return;
     }
-    const getConfig = ({
-      get: configBroker.get,
-      get_object: configBroker.getObject,
-    })[method];
-    if (!getConfig) {
-      console.log(JSON.stringify({error: `Error reading from broker: unknown method: ${method}`}));
-      return;
-    }
     try {
-      const value = getConfig.bind(configBroker)(key);
+      const value = configBroker.get(key);
       console.log(JSON.stringify({value}));
       return;
     } catch (err) {
@@ -52,7 +44,7 @@ const readConfigBroker = ({method, key}) => {
 };
 
 const resetConfigBroker = () => {
-  dispatchP.then(() => {
+  dispatchP = dispatchP.then(() => {
     configBroker = null;
     console.log(JSON.stringify({message: "Reset the broket, ready to load"}));
   });
@@ -69,7 +61,7 @@ readlineInterface.on("line", (line) => {
   }
   const runCommand = ({
     load: loadConfigBroker,
-    read: readConfigBroker,
+    get: readConfigBroker,
     reset: resetConfigBroker,
     done: () => {
       console.log(JSON.stringify({}));
