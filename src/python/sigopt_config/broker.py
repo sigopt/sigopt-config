@@ -102,9 +102,6 @@ class ConfigBroker(object):
       raise KeyError(name)
     return ret
 
-  def __setitem__(self, name, value):
-    self.impl.set_item(name, value)
-
 
 class ConfigBrokerImpl(object):
   def __init__(self, sources):
@@ -154,7 +151,3 @@ class ConfigBrokerImpl(object):
   def _ensure_safe_return(self, val):
     if is_mapping(val):
       raise Exception("Possibly unsafe .get of JSON object, values might be missing. Please use .get_object instead")
-
-  def set_item(self, name, value):
-    if self.sources:
-      self.sources[0].set_item(name, value)
