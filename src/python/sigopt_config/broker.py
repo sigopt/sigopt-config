@@ -35,18 +35,6 @@ class ConfigBroker(object):
   def get_object(self, name, default=None):
     return self.impl.get_object(name, default)
 
-  def get_array(self, name, default=None):
-    return self.impl.get_array(name, default)
-
-  def get_int(self, name, default=None):
-    return self.impl.get_int(name, default)
-
-  def get_bool(self, name, default=None):
-    return self.impl.get_bool(name, default)
-
-  def get_string(self, name, default=None):
-    return self.impl.get_string(name, default)
-
   @classmethod
   def from_configs(cls, configs):
     configs = [configs] if is_mapping(configs) else configs
