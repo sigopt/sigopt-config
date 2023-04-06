@@ -9,14 +9,11 @@ from sigopt_config.broker import *
 
 
 class TestConfigBroker(object):
-  def make_broker(self, source):
-    impl = ConfigBrokerImpl(source=source)
-    broker = ConfigBroker.from_configs([])
-    broker.impl = impl
-    return broker
+  def make_broker(self, configs):
+    return ConfigBroker.from_configs(configs)
 
   def test_empty(self):
-    broker = self.make_broker(ConfigBrokerSource({}))
+    broker = self.make_broker([])
     assert broker.get("fake.key", None) is None
     assert broker.get("fake.key", 1234) == 1234
     assert broker.get("fake.key", True) is True
@@ -104,12 +101,6 @@ class TestConfigBroker(object):
       dict2,
     ])
 
-    with pytest.raises(Exception):
-      broker.get("a")
-    with pytest.raises(Exception):
-      broker.get("b")
-    with pytest.raises(Exception):
-      broker.get("c")
-    assert broker.get_object("a") == {"a1": 1, "a2": True, "a3": "aaa"}
-    assert broker.get_object("b") == {"b1": 3, "b2": False, "b3": "bbb"}
-    assert broker.get_object("c") == {"conflict": True}
+    assert broker.get("a") == {"a1": 1, "a2": True, "a3": "aaa"}
+    assert broker.get("b") == {"b1": 3, "b2": False, "b3": "bbb"}
+    assert broker.get("c") == {"conflict": True}
