@@ -1,10 +1,12 @@
 # Copyright © 2023 Intel Corporation
 #
 # SPDX-License-Identifier: Apache License 2.0
+import functools
 import json
 import logging
 import os
 
+import json_merge_patch
 import yaml
 
 from sigopt_config.source import (
@@ -73,8 +75,9 @@ class ConfigBroker(object):
   @classmethod
   def from_configs(cls, configs, vault_secret_keys=None, include_vault=True):
     configs = [configs] if is_mapping(configs) else configs
+    merged_config = functools.reduce(json_merge_patch.merge, reversed(configs), {})
     sources = [
-      *(DictConfigBrokerSource(c) for c in configs),
+      DictConfigBrokerSource(merged_config),
       EnvironmentConfigBrokerSource(),
     ]
 
