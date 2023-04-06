@@ -44,9 +44,6 @@ class ConfigBroker(object):
     except KeyError:
       return default
 
-  def get_object(self, name, default=None):
-    return self.get(name, default)
-
   def __getitem__(self, name):
     base_dict = self.data
     parts = self._split_name(name)

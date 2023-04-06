@@ -67,10 +67,6 @@ class ConfigBroker {
     const value = getDottedNameFromObject(this.data, key);
     return typeof value === "undefined" ? defaultValue : value;
   }
-
-  getObject(key, defaultValue = undefined) {
-    return this.get(key, defaultValue);
-  }
 }
 
 export default ConfigBroker;

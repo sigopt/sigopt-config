@@ -15,7 +15,7 @@ describe("ConfigBroker", () => {
     expect(broker.get("a.b")).toEqual("c");
     expect(broker.get("a.d")).toEqual("e");
     expect(broker.get("a.y")).toEqual("z");
-    expect(broker.getObject("a")).toEqual({
+    expect(broker.get("a")).toEqual({
       b: "c",
       d: "e",
       y: "z",
