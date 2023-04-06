@@ -118,26 +118,6 @@ class ConfigBrokerImpl(object):
         return ret, source
     return default, None
 
-  def get_int(self, name, default):
-    return self._typed_get(name, default, int)
-
-  def get_bool(self, name, default):
-    return self._typed_get(name, default, bool, user_input_to_bool)
-
-  def get_string(self, name, default):
-    return self._typed_get(name, default, str, str)
-
-  def get_array(self, name, default):
-    return self._typed_get(name, default, list)
-
-  def _typed_get(self, name, default, typ, transformer=None):
-    val, source = self._get(name, default)
-    if source and not source.supports_types:
-      val = (transformer or typ)(val)
-    if val is not None:
-      assert isinstance(val, typ)
-    return val
-
   def get_object(self, name, default):
     objs = []
     for source in self.sources:
