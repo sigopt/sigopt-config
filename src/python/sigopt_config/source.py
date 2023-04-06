@@ -26,9 +26,6 @@ class ConfigBrokerSource(object):
   def get(self, name, default=None):
     raise NotImplementedError()
 
-  def all_configs_for_logging(self):
-    raise NotImplementedError()
-
 
 class DecoratorConfigBrokerSource(ConfigBrokerSource):
   def __init__(self, underlying):
@@ -41,15 +38,9 @@ class DecoratorConfigBrokerSource(ConfigBrokerSource):
   def get(self, name, default=None):
     return self.underlying.get(name, default=default)
 
-  def all_configs_for_logging(self):
-    return self.underlying.all_configs_for_logging()
-
 
 class SecretConfigBrokerSource(DecoratorConfigBrokerSource):
   supports_types = True
-
-  def all_configs_for_logging(self):
-    return {k: "*****" for k in self.underlying.all_configs_for_logging()}
 
 
 class ConfigBrokerValueNotAvailableException(KeyError):
@@ -68,9 +59,6 @@ class DictConfigBrokerSource(ConfigBrokerSource):
 
   def get(self, name, default=None):
     return self._do_get(name, default)[1]
-
-  def all_configs_for_logging(self):
-    return self._remove_unavailable(self.d)
 
   def _remove_unavailable(self, value):
     if is_mapping(value):

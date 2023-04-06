@@ -3,7 +3,6 @@
 # SPDX-License-Identifier: Apache License 2.0
 import functools
 import json
-import logging
 import os
 
 import json_merge_patch
@@ -50,14 +49,6 @@ class ConfigBroker(object):
 
   def get_string(self, name, default=None):
     return self.impl.get_string(name, default)
-
-  def log_configs(self):
-    for source in self.impl.sources:
-      logging.getLogger("sigopt.config").info(
-        "%s %s",
-        source.__class__.__name__,
-        json.dumps(source.all_configs_for_logging()),
-      )
 
   @classmethod
   def from_configs(cls, configs):
