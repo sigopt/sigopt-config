@@ -15,19 +15,13 @@ from sigopt_config.utils import extend_dict, is_mapping, user_input_to_bool
 
 
 _NO_DEFAULT = object()
-DEFAULT_SIGOPT_CONFIG_DIR = "./config"
 
 
 class ConfigBroker(object):
-  def __init__(self, sources):
-    error_message = (
-      "Sources must be a list of ConfigBrokerSources. Hint: you might want one of the ConfigBroker.from_* classmethods"
-    )
-    assert isinstance(sources, list), error_message
-    sources = [source for source in sources if source]
-    assert all(isinstance(source, ConfigBrokerSource) for source in sources), error_message
-    self.sources = sources
-    self.impl = ConfigBrokerImpl(self.sources)
+  def __init__(self, source):
+    assert isinstance(source, ConfigBrokerSource), error_message
+    self.source = source
+    self.impl = ConfigBrokerImpl(self.source)
 
   def get(self, name, default=None):
     return self.impl.get(name, default)
@@ -37,12 +31,9 @@ class ConfigBroker(object):
 
   @classmethod
   def from_configs(cls, configs):
-    configs = [configs] if is_mapping(configs) else configs
-    merged_config = functools.reduce(json_merge_patch.merge, reversed(configs), {})
-    sources = [
-      ConfigBrokerSource(merged_config),
-    ]
-    broker = cls(sources)
+    merged_config = functools.reduce(json_merge_patch.merge, reversed(list(configs)), {})
+    source = ConfigBrokerSource(merged_config)
+    broker = cls(source)
     return broker
 
   @classmethod
