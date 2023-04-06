@@ -10,21 +10,36 @@ import path from "path";
 import {parse as parseYAML} from "yaml";
 import jsonMergePatch from "json-merge-patch";
 
-import ObjectSource from "./object";
-import {coalesce, isDefinedAndNotNull, isJsObject} from "./utils";
-
 const readYAMLFile = (filepath) => parseYAML(fs.readFileSync(filepath).toString());
 
-class ConfigBroker {
-  constructor(source) {
-    this.source = source;
-  }
+const dottedNameParts = (key) => key.split(".");
 
+const getDottedNameFromObject = (object, key) => {
+  const parts = dottedNameParts(key);
+  const prefix = _.initial(parts);
+  const suffix = _.last(parts);
+  const parentObject = _.reduce(
+    prefix,
+    (memo, part) => {
+      if (!_.isObject(memo)) {
+        return memo;
+      }
+      return memo[part];
+    },
+    object,
+  );
+  if (typeof parentObject === "undefined") {
+    return undefined;
+  }
+  return parentObject[suffix];
+};
+
+class ConfigBroker {
   static fromConfigs(configs) {
     const reversed = [...configs];
     reversed.reverse();
     const data = _.reduce(reversed, jsonMergePatch.apply, {});
-    return new ConfigBroker(new ObjectSource(data));
+    return new ConfigBroker(data);
   }
 
   static fromDirectory(dir) {
@@ -44,22 +59,17 @@ class ConfigBroker {
     });
   }
 
-  get(key, defaultValue = undefined) {
-    return this._ensureSafeReturn(this.source.get(key));
+  constructor(data) {
+    this.data = data;
   }
 
-  _ensureSafeReturn(value) {
-    if (isJsObject(value)) {
-      throw new Error(
-        "Possibly unsafe .get of JSON object, values might be missing." +
-          " Please use .getObject instead",
-      );
-    }
-    return value;
+  get(key, defaultValue) {
+    const value = getDottedNameFromObject(this.data, key);
+    return typeof value === "undefined" ? defaultValue : value;
   }
 
   getObject(key, defaultValue = undefined) {
-    return this.source.get(key, defaultValue);
+    return this.get(key, defaultValue);
   }
 }
 

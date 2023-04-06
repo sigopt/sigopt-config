@@ -5,7 +5,6 @@
  */
 
 import ConfigBroker from "../broker";
-import ObjectSource from "../object";
 
 const source1 = {a: {b: "c", d: "e"}};
 const source2 = {a: {b: "f", y: "z"}};

@@ -80,7 +80,7 @@ class TestJsConfigBroker(ConfigTest):
   def load_config_value(self, config_dir, method, key):
     self.exec_command("load", directory=config_dir)
     try:
-      value = self.exec_command("read", method=method, key=key)["value"]
+      value = self.exec_command("read", method=method, key=key).get("value")
     finally:
       self.exec_command("reset")
     return value
