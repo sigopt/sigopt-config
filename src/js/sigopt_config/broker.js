@@ -7,11 +7,14 @@
 import _ from "underscore";
 import fs from "fs";
 import path from "path";
+import {parse as parseYAML} from "yaml";
 
 import EnvironmentSource from "./env";
 import ObjectSource from "./object";
 import VaultSource from "./vault";
 import {coalesce, isDefinedAndNotNull, isJsObject} from "./utils";
+
+const readYAMLFile = (filepath) => parseYAML(fs.readFileSync(filepath).toString());
 
 class ConfigBroker {
   constructor(sources, vaultSecretKeys) {
@@ -19,12 +22,27 @@ class ConfigBroker {
     this._vaultSecretKeys = vaultSecretKeys;
   }
 
+  static fromDirectory(dir, vaultSecretKeys) {
+    return new Promise((success, error) => {
+      fs.readdir(dir, (err, files) => {
+        if (err) {
+          return error(err);
+        }
+        const sources = _.map(files, (file) => {
+          const data = readYAMLFile(path.join(dir, file));
+          return new ObjectSource(data);
+        });
+        return success(new ConfigBroker(sources, vaultSecretKeys));
+      });
+    });
+  }
+
   static fromFile(config, vaultSecretKeys) {
     const sources = [];
     let extend = config;
     while (isDefinedAndNotNull(extend)) {
       extend = path.resolve(extend);
-      const data = JSON.parse(fs.readFileSync(extend));
+      const data = readYAMLFile(extend);
       const original = extend;
       extend = data.extends;
       delete data.extends;

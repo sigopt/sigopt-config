@@ -1,4 +1,6 @@
+import json
 import os
+import subprocess
 
 import pytest
 import yaml
@@ -41,10 +43,17 @@ class ConfigTest:
     result = self.load_config_value(config_dir, method, key)
     assert result == expected
 
-class TestConfigBroker(ConfigTest):
+class TestPythonConfigBroker(ConfigTest):
   def load_broker(self, config_dir):
     return ConfigBroker.from_directory(config_dir, include_vault=False)
 
   def load_config_value(self, config_dir, method, key):
     broker = self.load_broker(config_dir)
     return getattr(broker, method)(key)
+
+class TestJsConfigBroker(ConfigTest):
+  @pytest.fixture(scope="session")
+  def load_config_value(self, config_dir, method, key):
+    result = subprocess.run(["npx", "babel-node", "test/js_config_loader.js", config_dir, method, key],
+                            capture_output=True, check=True, text=True)
+    return json.loads(result.stdout)

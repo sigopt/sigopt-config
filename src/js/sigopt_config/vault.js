@@ -6,8 +6,6 @@
 
 import _ from "underscore";
 import fs from "fs";
-// eslint-disable-next-line import/no-unresolved
-import got from "got";
 import os from "os";
 import promisify from "es6-promisify";
 
@@ -124,7 +122,7 @@ export default class VaultSource {
 
   _fetchRequestBody(...args) {
     const chain = new SigoptError();
-    return got(...args).then((response) =>
+    return fetch(...args).then((response) =>
       response.statusCode === 200
         ? Promise.resolve(response.body)
         : Promise.reject(

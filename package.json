@@ -3,9 +3,12 @@
     "es6-promisify": "^5.0.0",
     "got": "^12.5.3",
     "lodash": "^4.17.19",
-    "underscore": "^1.12.1"
+    "underscore": "^1.12.1",
+    "yaml": "^2.2.1"
   },
   "devDependencies": {
+    "@babel/core": "^7.21.4",
+    "@babel/node": "^7.20.7",
     "@babel/preset-env": "^7.0.0",
     "jest": "^29.3.0",
     "jest-environment-jsdom": "^29.3.0",
