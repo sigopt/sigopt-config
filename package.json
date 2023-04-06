@@ -12,7 +12,6 @@
     "@babel/node": "^7.20.7",
     "@babel/preset-env": "^7.0.0",
     "jest": "^29.3.0",
-    "jest-environment-jsdom": "^29.3.0",
     "jest-junit": "^14.0.1"
   },
   "jest": {
@@ -22,14 +21,13 @@
     "reporters": [
       "default",
       "jest-junit"
-    ],
-    "testEnvironment": "jsdom"
+    ]
   },
   "license": "UNLICENSED",
   "name": "sigopt-config",
   "private": true,
   "repository": "https://github.com/sigopt/sigopt-config.git",
   "scripts": {
-    "test": "NODE_ENV=unit-testing TZ=UTC jest src/js/**"
+    "test": "jest test"
   }
 }
