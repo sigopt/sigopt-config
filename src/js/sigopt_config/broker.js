@@ -16,8 +16,8 @@ import {coalesce, isDefinedAndNotNull, isJsObject} from "./utils";
 const readYAMLFile = (filepath) => parseYAML(fs.readFileSync(filepath).toString());
 
 class ConfigBroker {
-  constructor(sources) {
-    this._sources = sources;
+  constructor(source) {
+    this.source = source;
   }
 
   static fromDirectory(dir) {
@@ -26,36 +26,20 @@ class ConfigBroker {
         if (err) {
           return error(err);
         }
-        const sources = _.map(files, (file) => readYAMLFile(path.join(dir, file)));
-        const data = _.reduce(sources, jsonMergePatch.apply, {});
+        try {
+          const configs = _.map(files, (file) => readYAMLFile(path.join(dir, file)));
+        } catch (err) {
+          return error(err);
+        }
+        const data = _.reduce(configs, jsonMergePatch.apply, {});
         const source = new ObjectSource(data);
-        return success(new ConfigBroker([source]));
+        return success(new ConfigBroker(source));
       });
     });
   }
 
-  initialize(success, error) {
-    const init = (sources) => {
-      if (_.isEmpty(sources)) {
-        return success();
-      } else {
-        return sources[0].initialize(_.partial(init, sources.slice(1)), error);
-      }
-    };
-    init(this._sources);
-  }
-
   get(key, defaultValue = undefined) {
-    return this._ensureSafeReturn(
-      coalesce(
-        _.reduce(
-          this._sources,
-          (memo, source) => (memo === undefined ? source.get(key) : memo),
-          undefined,
-        ),
-        defaultValue,
-      ),
-    );
+    return this._ensureSafeReturn(this.source.get(key));
   }
 
   _ensureSafeReturn(value) {
@@ -69,12 +53,7 @@ class ConfigBroker {
   }
 
   getObject(key, defaultValue = undefined) {
-    const values = _.without(
-      _.map(this._sources, (source) => source.get(key)),
-      undefined,
-    );
-    values.reverse();
-    return _.isEmpty(values) ? defaultValue : _.extend({}, ...values);
+    return this.source.get(key, defaultValue);
   }
 }
 
