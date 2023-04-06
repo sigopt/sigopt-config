@@ -14,7 +14,7 @@ commands:
     steps:
       - checkout
       - run: npm install
-      - run: JEST_JUNIT_OUTPUT=junit-results/jest/junit.xml ./node_modules/jest/bin/jest.js --reporters=default --reporters=jest-junit --runInBand --ci
+      - run: JEST_JUNIT_OUTPUT=junit-results/jest/junit.xml npx jest --reporters=default --reporters=jest-junit --runInBand --ci
 
 jobs:
   python_test:

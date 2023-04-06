@@ -26,6 +26,6 @@
   "private": true,
   "repository": "https://github.com/sigopt/sigopt-config.git",
   "scripts": {
-    "test": "jest test"
+    "test": "jest"
   }
 }
