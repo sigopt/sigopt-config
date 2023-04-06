@@ -9,8 +9,6 @@ import jmespath
 import json_merge_patch
 import yaml
 
-from sigopt_config.utils import is_mapping
-
 
 class ConfigBroker(object):
   @classmethod
