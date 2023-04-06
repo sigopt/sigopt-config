@@ -15,7 +15,6 @@ from sigopt_config.source import (
   MutableConfigBrokerSource,
 )
 from sigopt_config.utils import extend_dict, is_mapping, user_input_to_bool
-from sigopt_config.vault_secrets.source import create_vault_source
 
 
 _NO_DEFAULT = object()
@@ -35,7 +34,6 @@ class ConfigBroker(object):
     self.mutable_source = MutableConfigBrokerSource()
     self.sources = [self.mutable_source, *sources]
     self.impl = ConfigBrokerImpl(self.sources)
-    self.vault_source = None
 
   def get(self, name, default=None):
     return self.impl.get(name, default)
@@ -63,38 +61,26 @@ class ConfigBroker(object):
         json.dumps(source.all_configs_for_logging()),
       )
 
-  def include_vault(self, vault_secret_keys=None):
-    if self.vault_source:
-      raise Exception("Vault has already been included in this config broker")
-    assert isinstance(self.sources[0], MutableConfigBrokerSource)
-    self.vault_source = create_vault_source(ConfigBroker(self.sources), desired_secret_keys=vault_secret_keys)
-    if self.vault_source:
-      self.sources.append(self.vault_source)
-
   @classmethod
-  def from_configs(cls, configs, vault_secret_keys=None, include_vault=True):
+  def from_configs(cls, configs):
     configs = [configs] if is_mapping(configs) else configs
     merged_config = functools.reduce(json_merge_patch.merge, reversed(configs), {})
     sources = [
       DictConfigBrokerSource(merged_config),
     ]
-
     broker = cls(sources)
-    if include_vault:
-      broker.include_vault(vault_secret_keys=vault_secret_keys)
-
     return broker
 
   @classmethod
-  def from_directory(cls, dirname, vault_secret_keys=None, include_vault=True):
+  def from_directory(cls, dirname):
     configs = []
     for config_path in sorted(os.listdir(dirname)):
       with open(os.path.join(dirname, config_path)) as config_fp:
         configs.append(yaml.safe_load(config_fp))
-    return cls.from_configs(configs, vault_secret_keys=vault_secret_keys, include_vault=include_vault)
+    return cls.from_configs(configs)
 
   @classmethod
-  def from_file(cls, filename, vault_secret_keys=None, include_vault=True):
+  def from_file(cls, filename):
     configs = []
     extends = filename
     while extends:
@@ -115,12 +101,12 @@ class ConfigBroker(object):
         if extends.startswith("./") or extends.startswith("../"):
           basedir = os.path.dirname(original)
         extends = os.path.join(basedir, extends)
-    return cls.from_configs(configs, vault_secret_keys=vault_secret_keys, include_vault=include_vault)
+    return cls.from_configs(configs)
 
   @classmethod
-  def from_environ(cls, env_var=DEFAULT_SIGOPT_CONFIG_ENV_KEY, vault_secret_keys=None):
+  def from_environ(cls, env_var=DEFAULT_SIGOPT_CONFIG_ENV_KEY):
     config_file = os.environ[env_var]
-    return cls.from_file(config_file, vault_secret_keys=vault_secret_keys)
+    return cls.from_file(config_file)
 
   def __getitem__(self, name):
     ret = self.impl.get(name, _NO_DEFAULT)

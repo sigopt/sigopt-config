@@ -11,18 +11,16 @@ import {parse as parseYAML} from "yaml";
 import jsonMergePatch from "json-merge-patch";
 
 import ObjectSource from "./object";
-import VaultSource from "./vault";
 import {coalesce, isDefinedAndNotNull, isJsObject} from "./utils";
 
 const readYAMLFile = (filepath) => parseYAML(fs.readFileSync(filepath).toString());
 
 class ConfigBroker {
-  constructor(sources, vaultSecretKeys) {
+  constructor(sources) {
     this._sources = sources;
-    this._vaultSecretKeys = vaultSecretKeys;
   }
 
-  static fromDirectory(dir, vaultSecretKeys) {
+  static fromDirectory(dir) {
     return new Promise((success, error) => {
       fs.readdir(dir, (err, files) => {
         if (err) {
@@ -31,12 +29,12 @@ class ConfigBroker {
         const sources = _.map(files, (file) => readYAMLFile(path.join(dir, file)));
         const data = _.reduce(sources, jsonMergePatch.apply, {});
         const source = new ObjectSource(data);
-        return success(new ConfigBroker([source], vaultSecretKeys));
+        return success(new ConfigBroker([source]));
       });
     });
   }
 
-  static fromFile(config, vaultSecretKeys) {
+  static fromFile(config) {
     const sources = [];
     let extend = config;
     while (isDefinedAndNotNull(extend)) {
@@ -55,13 +53,13 @@ class ConfigBroker {
       }
     }
     const data = _.reduce(sources, jsonMergePatch.apply, {});
-    return new ConfigBroker([new ObjectSource(data)], vaultSecretKeys);
+    return new ConfigBroker([new ObjectSource(data)]);
   }
 
   initialize(success, error) {
     const init = (sources) => {
       if (_.isEmpty(sources)) {
-        return this._maybeAddVault(success, error);
+        return success();
       } else {
         return sources[0].initialize(_.partial(init, sources.slice(1)), error);
       }
@@ -99,24 +97,6 @@ class ConfigBroker {
     );
     values.reverse();
     return _.isEmpty(values) ? defaultValue : _.extend({}, ...values);
-  }
-
-  _maybeAddVault(success, error) {
-    if (this.get("vault.enabled")) {
-      const source = new VaultSource({
-        engine: this.get("vault.engine"),
-        host: this.get("vault.host"),
-        keyPrefix: this.get("vault.key_prefix"),
-        noncePath: this.get("vault.nonce_path"),
-        // NOTE: vault.token is not specified in prod, but can be included for dev
-        token: this.get("vault.token"),
-        vaultSecretKeys: this._vaultSecretKeys,
-      });
-      this._sources.push(source);
-      return source.initialize(success, error);
-    } else {
-      return success();
-    }
   }
 
   allConfigsForLogging() {

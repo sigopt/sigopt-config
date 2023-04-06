@@ -45,7 +45,7 @@ class ConfigTest:
 
 class TestPythonConfigBroker(ConfigTest):
   def load_broker(self, config_dir):
-    return ConfigBroker.from_directory(config_dir, include_vault=False)
+    return ConfigBroker.from_directory(config_dir)
 
   def load_config_value(self, config_dir, method, key):
     broker = self.load_broker(config_dir)
