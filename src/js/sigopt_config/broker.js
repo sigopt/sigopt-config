@@ -34,28 +34,6 @@ class ConfigBroker {
     });
   }
 
-  static fromFile(config) {
-    const sources = [];
-    let extend = config;
-    while (isDefinedAndNotNull(extend)) {
-      extend = path.resolve(extend);
-      const data = readYAMLFile(extend);
-      const original = extend;
-      extend = data.extends;
-      delete data.extends;
-      sources.push(data);
-      if (isDefinedAndNotNull(extend)) {
-        let basedir = process.env.sigopt_api_config_dir || "./config";
-        if (extend.startsWith("./") || extend.startsWith("../")) {
-          basedir = path.dirname(original);
-        }
-        extend = path.join(basedir, extend);
-      }
-    }
-    const data = _.reduce(sources, jsonMergePatch.apply, {});
-    return new ConfigBroker([new ObjectSource(data)]);
-  }
-
   initialize(success, error) {
     const init = (sources) => {
       if (_.isEmpty(sources)) {
