@@ -8,10 +8,8 @@ import os
 import json_merge_patch
 import yaml
 
-from sigopt_config.source import (
-  ConfigBrokerSource,
-)
-from sigopt_config.utils import extend_dict, is_mapping, user_input_to_bool
+from sigopt_config.source import ConfigBrokerSource
+from sigopt_config.utils import is_mapping
 
 
 _NO_DEFAULT = object()
