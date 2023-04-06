@@ -8,6 +8,7 @@ import _ from "underscore";
 import fs from "fs";
 import path from "path";
 import {parse as parseYAML} from "yaml";
+import jsonMergePatch from "json-merge-patch";
 
 import EnvironmentSource from "./env";
 import ObjectSource from "./object";
@@ -28,11 +29,10 @@ class ConfigBroker {
         if (err) {
           return error(err);
         }
-        const sources = _.map(files, (file) => {
-          const data = readYAMLFile(path.join(dir, file));
-          return new ObjectSource(data);
-        });
-        return success(new ConfigBroker(sources, vaultSecretKeys));
+        const sources = _.map(files, (file) => readYAMLFile(path.join(dir, file)));
+        const data = _.reduce(sources, jsonMergePatch.apply, {});
+        const source = new ObjectSource(data);
+        return success(new ConfigBroker([source, new EnvironmentSource()], vaultSecretKeys));
       });
     });
   }
@@ -46,7 +46,7 @@ class ConfigBroker {
       const original = extend;
       extend = data.extends;
       delete data.extends;
-      sources.push(new ObjectSource(data));
+      sources.push(data);
       if (isDefinedAndNotNull(extend)) {
         let basedir = process.env.sigopt_api_config_dir || "./config";
         if (extend.startsWith("./") || extend.startsWith("../")) {
@@ -55,8 +55,8 @@ class ConfigBroker {
         extend = path.join(basedir, extend);
       }
     }
-    sources.push(new EnvironmentSource());
-    return new ConfigBroker(sources, vaultSecretKeys);
+    const data = _.reduce(sources, jsonMergePatch.apply, {});
+    return new ConfigBroker([new ObjectSource(data), new EnvironmentSource()], vaultSecretKeys);
   }
 
   initialize(success, error) {
