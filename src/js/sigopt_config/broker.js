@@ -27,6 +27,7 @@ class ConfigBroker {
         if (err) {
           return error(err);
         }
+        files.sort();
         let configs;
         try {
           configs = _.map(files, (file) => readYAMLFile(path.join(dir, file)));
