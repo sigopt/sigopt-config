@@ -1,0 +1,3 @@
+get_object:
+  - key: web.static_routes
+    expected: {"/static/a": {"cacheAgeHours": 1, "dir": "artifacts/web/static"}}

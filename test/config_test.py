@@ -52,7 +52,6 @@ class TestPythonConfigBroker(ConfigTest):
     return getattr(broker, method)(key)
 
 class TestJsConfigBroker(ConfigTest):
-  @pytest.fixture(scope="session")
   def load_config_value(self, config_dir, method, key):
     result = subprocess.run(["npx", "babel-node", "test/js_config_loader.js", config_dir, method, key],
                             capture_output=True, check=True, text=True)

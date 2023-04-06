@@ -1,0 +1,4 @@
+web:
+  static_routes:
+    "/static/a": 
+      cacheAgeHours: 1
