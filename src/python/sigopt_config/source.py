@@ -45,28 +45,6 @@ class DecoratorConfigBrokerSource(ConfigBrokerSource):
     return self.underlying.all_configs_for_logging()
 
 
-class MutableConfigBrokerSource(DecoratorConfigBrokerSource):
-  def __init__(self):
-    data = {}
-    super().__init__(DictConfigBrokerSource(data))
-    self._dict = data
-
-  def set_item(self, name, value):
-    parts = self._split_name(name)
-    base_dict = self._dict
-    for p in parts[:-1]:
-      base_dict = base_dict.setdefault(p, {})
-      if not is_mapping(base_dict):
-        raise Exception(f"Expected object for key {p} in {name} - found {type(base_dict)}")
-    base_dict[parts[-1]] = value
-
-  def set_not_available(self, name):
-    self.set_item(name, _NOT_AVAILABLE)
-
-  def reset(self):
-    self._dict.clear()
-
-
 class SecretConfigBrokerSource(DecoratorConfigBrokerSource):
   supports_types = True
 

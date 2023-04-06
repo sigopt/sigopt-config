@@ -27,39 +27,6 @@ class TestConfigBroker(object):
     with pytest.raises(KeyError):
       broker["fake.key"]
 
-  def test_set(self):
-    broker = self.make_broker([MutableConfigBrokerSource(), DictConfigBrokerSource({"fake": {"other": "thing"}})])
-    broker["fake.key"] = "fake value"
-    assert broker.get("fake.key", None) == "fake value"
-    assert broker.get("fake.key", 123) == "fake value"
-    assert broker["fake.key"] == "fake value"
-    assert broker.get("also.fake") is None
-    assert broker.get("fake.prefix") is None
-    assert broker.get_object("fake") == {"key": "fake value", "other": "thing"}
-
-  def test_not_available(self):
-    source = MutableConfigBrokerSource()
-    source.set_item("fake.key", "value")
-    source.set_not_available("not.available.yet")
-    broker = self.make_broker([source])
-    assert broker["fake.key"] == "value"
-    assert broker.get_object("fake") == {"key": "value"}
-    with pytest.raises(ConfigBrokerValueNotAvailableException):
-      broker.get("not.available.yet")
-    with pytest.raises(ConfigBrokerValueNotAvailableException):
-      broker.get("not.available.yet.subkey")
-    with pytest.raises(ConfigBrokerValueNotAvailableException):
-      broker["not.available.yet"]
-    with pytest.raises(ConfigBrokerValueNotAvailableException):
-      broker["not.available.yet.subkey"]
-    with pytest.raises(ConfigBrokerValueNotAvailableException):
-      broker.get_object("not.available")
-    with pytest.raises(ConfigBrokerValueNotAvailableException):
-      broker.get_object("not")
-    assert json.dumps(source.all_configs_for_logging()) == json.dumps(
-      {"fake": {"key": "value"}, "not": {"available": {"yet": "_NOT_AVAILABLE"}}}
-    )
-
   def test_exists(self):
     dict1 = {
       "a": {

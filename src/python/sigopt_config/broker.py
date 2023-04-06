@@ -12,7 +12,6 @@ import yaml
 from sigopt_config.source import (
   ConfigBrokerSource,
   DictConfigBrokerSource,
-  MutableConfigBrokerSource,
 )
 from sigopt_config.utils import extend_dict, is_mapping, user_input_to_bool
 
@@ -31,8 +30,7 @@ class ConfigBroker(object):
     assert isinstance(sources, list), error_message
     sources = [source for source in sources if source]
     assert all(isinstance(source, ConfigBrokerSource) for source in sources), error_message
-    self.mutable_source = MutableConfigBrokerSource()
-    self.sources = [self.mutable_source, *sources]
+    self.sources = sources
     self.impl = ConfigBrokerImpl(self.sources)
 
   def get(self, name, default=None):
@@ -116,9 +114,6 @@ class ConfigBroker(object):
 
   def __setitem__(self, name, value):
     self.impl.set_item(name, value)
-
-  def reset(self):
-    self.mutable_source.reset()
 
 
 class ConfigBrokerImpl(object):
