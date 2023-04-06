@@ -52,7 +52,35 @@ class TestPythonConfigBroker(ConfigTest):
     return getattr(broker, method)(key)
 
 class TestJsConfigBroker(ConfigTest):
+  broker_proc = None
+
+  @pytest.fixture(autouse=True, scope="session")
+  @classmethod
+  def start_broker_proc(cls):
+    cls.broker_proc = subprocess.Popen(
+        ["npx", "babel-node", "test/js_config_loader.js"],
+        stdin=subprocess.PIPE,
+        stdout=subprocess.PIPE)
+    yield
+    cls.exec_command("done")
+    cls.broker_proc.wait()
+    cls.broker_proc = None
+
+  @classmethod
+  def exec_command(cls, command, **kwargs):
+    cls.broker_proc.stdin.writelines([
+      (json.dumps({"command": command, **kwargs}) + "\n").encode(),
+    ])
+    cls.broker_proc.stdin.flush()
+    response = cls.broker_proc.stdout.readline()
+    response = json.loads(response)
+    assert "error" not in response, response["error"]
+    return response
+
   def load_config_value(self, config_dir, method, key):
-    result = subprocess.run(["npx", "babel-node", "test/js_config_loader.js", config_dir, method, key],
-                            capture_output=True, check=True, text=True)
-    return json.loads(result.stdout)
+    self.exec_command("load", directory=config_dir)
+    try:
+      value = self.exec_command("read", method=method, key=key)["value"]
+    finally:
+      self.exec_command("reset")
+    return value
