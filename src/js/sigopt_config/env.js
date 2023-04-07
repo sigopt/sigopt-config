@@ -5,10 +5,10 @@
  */
 
 import _ from "underscore";
-import { set } from "lodash";
+import {set} from "lodash";
 
 import ObjectSource from "./object";
-import { startsWith } from "./utils";
+import {startsWith} from "./utils";
 
 export default class EnvironmentSource {
   initialize(success) {

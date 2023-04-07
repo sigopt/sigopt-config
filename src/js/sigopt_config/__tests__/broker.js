@@ -6,11 +6,11 @@
 
 import ConfigBroker from "../broker";
 import ObjectSource from "../object";
-import { ConfigBrokerValueNotAvailableException } from "../exceptions";
-import { NOT_AVAILABLE } from "../constants";
+import {ConfigBrokerValueNotAvailableException} from "../exceptions";
+import {NOT_AVAILABLE} from "../constants";
 
-const source1 = new ObjectSource({ a: { b: "c", d: "e" } });
-const source2 = new ObjectSource({ a: { b: "f", y: "z" } });
+const source1 = new ObjectSource({a: {b: "c", d: "e"}});
+const source2 = new ObjectSource({a: {b: "f", y: "z"}});
 source1.setNotAvailable("not.available");
 
 describe("ConfigBroker", () => {
@@ -21,16 +21,16 @@ describe("ConfigBroker", () => {
       expect(broker.get("a.d")).toEqual("e");
       expect(broker.get("a.y")).toEqual("z");
       expect(() => broker.get("not.available")).toThrow(
-        ConfigBrokerValueNotAvailableException
+        ConfigBrokerValueNotAvailableException,
       );
       expect(() => broker.get("not.available.subkey")).toThrow(
-        ConfigBrokerValueNotAvailableException
+        ConfigBrokerValueNotAvailableException,
       );
       expect(() => broker.getObject("not.available")).toThrow(
-        ConfigBrokerValueNotAvailableException
+        ConfigBrokerValueNotAvailableException,
       );
       expect(() => broker.getObject("not")).toThrow(
-        ConfigBrokerValueNotAvailableException
+        ConfigBrokerValueNotAvailableException,
       );
       expect(broker.getObject("a")).toEqual({
         b: "c",

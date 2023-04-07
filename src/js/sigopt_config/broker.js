@@ -11,7 +11,7 @@ import path from "path";
 import EnvironmentSource from "./env";
 import ObjectSource from "./object";
 import VaultSource from "./vault";
-import { coalesce, isDefinedAndNotNull, isJsObject } from "./utils";
+import {coalesce, isDefinedAndNotNull, isJsObject} from "./utils";
 
 class ConfigBroker {
   constructor(sources, vaultSecretKeys) {
@@ -58,10 +58,10 @@ class ConfigBroker {
         _.reduce(
           this._sources,
           (memo, source) => (memo === undefined ? source.get(key) : memo),
-          undefined
+          undefined,
         ),
-        defaultValue
-      )
+        defaultValue,
+      ),
     );
   }
 
@@ -69,7 +69,7 @@ class ConfigBroker {
     if (isJsObject(value)) {
       throw new Error(
         "Possibly unsafe .get of JSON object, values might be missing." +
-          " Please use .getObject instead"
+          " Please use .getObject instead",
       );
     }
     return value;
@@ -78,7 +78,7 @@ class ConfigBroker {
   getObject(key, defaultValue = undefined) {
     const values = _.without(
       _.map(this._sources, (source) => source.get(key)),
-      undefined
+      undefined,
     );
     values.reverse();
     return _.isEmpty(values) ? defaultValue : _.extend({}, ...values);
