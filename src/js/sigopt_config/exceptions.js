@@ -5,7 +5,7 @@
  */
 
 // NOTE: do we catch by class, and so need to use this base-class in sigopt-server?
-export default class SigoptError extends Error {
+export class SigoptError extends Error {
   chain(causedBy) {
     this.stack += `\nCaused by: ${causedBy.stack}`;
     return this;

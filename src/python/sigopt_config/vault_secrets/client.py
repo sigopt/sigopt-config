@@ -25,7 +25,7 @@ def retry_with_backoff(func):
         return func(*args, **kwargs)
       except Exception as e:
         logging.getLogger("sigopt.vault").warning("encountered exception on try #%s: %s", (i + 1), e)
-        time.sleep(2**i + random.random())
+        time.sleep(2**i + random.random())  # nosec
         if i == NUM_RETRIES:
           raise e
 

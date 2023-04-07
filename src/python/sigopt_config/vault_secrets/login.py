@@ -40,13 +40,13 @@ class AwsLogin(VaultLogin):
       "pkcs7": pkcs7,
     }
 
-  def _get_nonce(self):
+  def _get_nonce(self, nonce_path):
     # NOTE: As an added security measure, Vault will accept a unique nonce value when you
     # first login to the instance. This is to prevent replay attacks where someone else can just
     # log in with the same credentials, as subsequent login attempts must reuse the nonce. However,
     # if the nonce is lost, you may not be able to log in from that instance again. To recover from
     # this state, you may need to delete the instance from the identity-accesslist in vault
-    return self._fetch_nonce()
+    return self._fetch_nonce(nonce_path)
 
   def _fetch_nonce(self, nonce_path):
     if os.path.exists(nonce_path):

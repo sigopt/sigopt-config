@@ -6,8 +6,8 @@
 
 import _ from "underscore";
 
-import {ConfigBrokerValueNotAvailableException} from "./exceptions";
-import {NOT_AVAILABLE} from "./constants";
+import { ConfigBrokerValueNotAvailableException } from "./exceptions";
+import { NOT_AVAILABLE } from "./constants";
 
 const dottedNameParts = (key) => key.split(".");
 const dottedNamePrefix = (key) => _.initial(dottedNameParts(key));
@@ -36,7 +36,7 @@ const getDottedNameFromObject = (object, key) => {
       }
       return memo[part] || {};
     },
-    object,
+    object
   );
   const value =
     parentObject === NOT_AVAILABLE ? NOT_AVAILABLE : parentObject[suffix];
@@ -52,13 +52,13 @@ const setDottedNameFromObject = (object, key, value) => {
   const base = _.reduce(
     prefix,
     (memo, part) => {
-      memo[part] = memo[part] || {};
+      memo[part] ||= {};
       if (memo[part] === NOT_AVAILABLE) {
         throw new ConfigBrokerValueNotAvailableException(key);
       }
       return memo[part];
     },
-    object,
+    object
   );
   base[suffix] = value;
 };

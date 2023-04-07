@@ -1,9 +1,22 @@
 version: 2.1
 
+orbs:
+  node: circleci/node@5.1.0
+
 commands:
   install-trivy:
     steps:
       - run: curl -fSsLo trivy.deb https://github.com/aquasecurity/trivy/releases/download/v0.38.3/trivy_0.38.3_Linux-64bit.deb && sudo dpkg -i trivy.deb && rm trivy.deb
+  pre-commit:
+    steps:
+      - checkout
+      - run: sudo pip install --upgrade pip setuptools
+      - run: pip install . -r requirements-dev.txt
+      - node/install:
+          install-yarn: false
+          node-version: "18.14.0"
+      - run: npm install
+      - run: SKIP=detect-aws-credentials pre-commit run --all-files
   python_test:
     steps:
       - checkout
@@ -42,5 +55,6 @@ workflows:
   main:
     jobs:
       - node_test
+      - pre-commit
       - python_test
       - trivy-scan-project

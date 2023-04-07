@@ -8,14 +8,12 @@ import _ from "underscore";
 import fs from "fs";
 // eslint-disable-next-line import/no-unresolved
 import got from "got";
-import os from "os";
 import promisify from "es6-promisify";
 
 import ObjectSource from "./object";
-import {SigoptError, HttpError} from "./exceptions";
-import {compactObject} from "./utils";
-import {AWS_METADATA_URL} from "./constants";
-
+import { AWS_METADATA_URL } from "./constants";
+import { HttpError, SigoptError } from "./exceptions";
+import { compactObject } from "./utils";
 
 export default class VaultSource {
   constructor(options) {
@@ -35,7 +33,12 @@ export default class VaultSource {
       .then((cache) => {
         this._underlying = cache;
       })
-      .then(() => new Promise((s, e) => this._underlying.initialize(s, e)))
+      .then(
+        () =>
+          new Promise((s, e) => {
+            this._underlying.initialize(s, e);
+          })
+      )
       .then(success, error);
   }
 
@@ -48,34 +51,34 @@ export default class VaultSource {
       this._request(
         "post",
         "/v1/auth/aws/login",
-        compactObject({nonce, pkcs7, role}),
+        compactObject({ nonce, pkcs7, role })
       ).then((body) => {
         this._token = body.auth.client_token;
         return this._persistNonce(nonce);
-      }),
+      })
     );
   }
 
   _fetchPkcs7() {
     return this._fetchRequestBody(
-      `${AWS_METADATA_URL}/dynamic/instance-identity/pkcs7`,
+      `${AWS_METADATA_URL}/dynamic/instance-identity/pkcs7`
     ).then((pkcs7) => pkcs7.replace(/\n/gu, ""));
   }
 
   _fetchRole() {
     return this._fetchRequestBody(
-      `${AWS_METADATA_URL}/meta-data/iam/security-credentials/`,
+      `${AWS_METADATA_URL}/meta-data/iam/security-credentials/`
     );
   }
 
   _fetchNonce() {
     return promisify(
       fs.readFile,
-      fs,
+      fs
     )(this._noncePath)
       .then((data) => data.toString("utf8"))
       .catch((err) =>
-        err.code === "ENOENT" ? Promise.resolve(null) : Promise.reject(err),
+        err.code === "ENOENT" ? Promise.resolve(null) : Promise.reject(err)
       );
   }
 
@@ -85,11 +88,11 @@ export default class VaultSource {
       .then((fd) =>
         promisify(fs.write, fs)(fd, nonce).then(
           () => cleanup(fd),
-          (err) => cleanup(fd).then(() => Promise.reject(err)),
-        ),
+          (err) => cleanup(fd).then(() => Promise.reject(err))
+        )
       )
       .catch((err) =>
-        err.code === "EEXIST" ? Promise.resolve(null) : Promise.reject(err),
+        err.code === "EEXIST" ? Promise.resolve(null) : Promise.reject(err)
       );
   }
 
@@ -110,7 +113,7 @@ export default class VaultSource {
         const fetchPromises = _.map(this._vaultSecretKeys, (key) =>
           this._request("get", this._secretPath(key))
             .then((response) => response.data.data)
-            .then((data) => [key, data]),
+            .then((data) => [key, data])
         );
         return Promise.all(fetchPromises)
           .then(_.object)
@@ -131,15 +134,15 @@ export default class VaultSource {
             new HttpError({
               message: response.body,
               status: response.statusCode,
-            }).chain(chain),
-          ),
+            }).chain(chain)
+          )
     );
   }
 
   _request(method, path, data) {
     return this._fetchRequestBody(this._host + path, {
       json: data,
-      headers: compactObject({"X-Vault-Token": this._token}),
+      headers: compactObject({ "X-Vault-Token": this._token }),
       method: method,
       responseType: "json",
     });
