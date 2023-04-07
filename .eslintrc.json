@@ -20,9 +20,6 @@
   "parser": "@babel/eslint-parser",
   "parserOptions": {
     "codeFrame": false,
-    "ecmaFeatures": {
-      "jsx": true
-    },
     "ecmaVersion": 6,
     "requireConfigFile": false,
     "sourceType": "module"
@@ -69,7 +66,6 @@
     "jest/no-conditional-expect": 0,
     "jest/no-done-callback": 0,
     "jest/no-export": 0,
-    "jsx-quotes": 0,
     "key-spacing": 0,
     "keyword-spacing": 0,
     "line-comment-position": 0,
