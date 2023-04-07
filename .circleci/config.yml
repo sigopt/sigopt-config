@@ -22,7 +22,7 @@ commands:
       - checkout
       - run: sudo pip install --upgrade pip setuptools
       - run: pip install . -r requirements-dev.txt
-      - run: ./pp pytest ./test/python
+      - run: PYTHONPATH=src/python pytest ./test/python
   node_test:
     steps:
       - checkout
