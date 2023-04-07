@@ -15,19 +15,25 @@ commands:
       - checkout
       - run: npm install
       - run: sudo pip install --upgrade pip setuptools
-      - run: pip install -r requirements.txt -r requirements-dev.txt
-      - run: ./pp pytest test/config_test.py
+      - run: pip install . -r requirements-dev.txt
+      - run: pytest test/config_test.py --junitxml=junit-results.xml
+      - store_test_results:
+          path: junit-results.xml
   python_test:
     steps:
       - checkout
       - run: sudo pip install --upgrade pip setuptools
       - run: pip install . -r requirements-dev.txt
-      - run: ./pp pytest test/python
+      - run: pytest ./test/python --junitxml=junit-results.xml
+      - store_test_results:
+          path: junit-results.xml
   node_test:
     steps:
       - checkout
       - run: npm install
-      - run: JEST_JUNIT_OUTPUT=junit-results/jest/junit.xml npx jest --reporters=default --reporters=jest-junit --runInBand --ci
+      - run: JEST_JUNIT_OUTPUT=junit-results.xml npx jest --reporters=default --reporters=jest-junit --runInBand --ci
+      - store_test_results:
+          path: junit-results.xml
 
 jobs:
   combined_test:
