@@ -21,7 +21,7 @@ commands:
     steps:
       - checkout
       - run: sudo pip install --upgrade pip setuptools
-      - run: pip install -r requirements.txt -r requirements-dev.txt
+      - run: pip install . -r requirements-dev.txt
       - run: ./pp pytest test/python
   node_test:
     steps:

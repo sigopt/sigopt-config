@@ -11,3 +11,7 @@ artifacts/
 # virtual environments
 .venv/
 venv/
+
+# setup.cfg
+build/
+*egg-info*
