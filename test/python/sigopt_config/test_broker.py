@@ -5,9 +5,6 @@ import pytest
 from sigopt_config.broker import *
 
 
-# pylint: disable=pointless-statement
-
-
 class TestConfigBroker(object):
   def make_broker(self, configs):
     return ConfigBroker.from_configs(configs)
