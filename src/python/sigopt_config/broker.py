@@ -27,9 +27,6 @@ class ConfigBroker(object):
   def __init__(self, data):
     self.data = data
 
-  def _split_name(self, name):
-    return name.split(".")
-
   def __contains__(self, name):
     try:
       self[name]
