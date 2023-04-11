@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import readline from "readline";
 
 import ConfigBroker from "../src/js/sigopt_config/broker";
@@ -13,12 +14,19 @@ let configBroker = null;
 
 const loadConfigBroker = ({directory}) => {
   dispatchP = dispatchP.then(() => {
-    return ConfigBroker.fromDirectory(directory).then((broker) => {
+    return ConfigBroker.fromDirectory(directory).then(
+      (broker) => {
         configBroker = broker;
-        console.log(JSON.stringify({message: `Loaded broker from ${directory}`}));
+        console.log(
+          JSON.stringify({message: `Loaded broker from ${directory}`}),
+        );
       },
       (err) => {
-        console.log(JSON.stringify({error: `Error loading broker from ${directory}: ${err}`}));
+        console.log(
+          JSON.stringify({
+            error: `Error loading broker from ${directory}: ${err}`,
+          }),
+        );
         console.error(err);
       },
     );
@@ -28,7 +36,9 @@ const loadConfigBroker = ({directory}) => {
 const readConfigBroker = ({key}) => {
   dispatchP = dispatchP.then(() => {
     if (!configBroker) {
-      console.log(JSON.stringify({error: `Error reading from broker: broker not loaded`}));
+      console.log(
+        JSON.stringify({error: `Error reading from broker: broker not loaded`}),
+      );
       return;
     }
     try {
@@ -55,11 +65,13 @@ readlineInterface.on("line", (line) => {
   try {
     command = JSON.parse(line);
   } catch (err) {
-    console.log(JSON.stringify({error: `Could not parse JSON command: ${line}`}));
+    console.log(
+      JSON.stringify({error: `Could not parse JSON command: ${line}`}),
+    );
     console.error(err);
     return;
   }
-  const runCommand = ({
+  const runCommand = {
     load: loadConfigBroker,
     get: readConfigBroker,
     reset: resetConfigBroker,
@@ -67,7 +79,7 @@ readlineInterface.on("line", (line) => {
       console.log(JSON.stringify({}));
       process.exit();
     },
-  })[command.command];
+  }[command.command];
   if (!runCommand) {
     console.log(JSON.stringify({error: `Unknown command: ${command.command}`}));
     return;
