@@ -6,12 +6,13 @@
 
 import _ from "underscore";
 import fs from "fs";
+import jmespath from "jmespath";
+import jsonMergePatch from "json-merge-patch";
 import path from "path";
 import {parse as parseYAML} from "yaml";
-import jsonMergePatch from "json-merge-patch";
-import jmespath from "jmespath";
 
-const readYAMLFile = (filepath) => parseYAML(fs.readFileSync(filepath).toString());
+const readYAMLFile = (filepath) =>
+  parseYAML(fs.readFileSync(filepath).toString());
 
 class ConfigBroker {
   static fromConfigs(configs) {
@@ -31,8 +32,8 @@ class ConfigBroker {
         let configs;
         try {
           configs = _.map(files, (file) => readYAMLFile(path.join(dir, file)));
-        } catch (err) {
-          return error(err);
+        } catch (e) {
+          return error(e);
         }
         return success(ConfigBroker.fromConfigs(configs));
       });
