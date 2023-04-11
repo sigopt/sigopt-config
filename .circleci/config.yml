@@ -1,4 +1,4 @@
-version: '2.1'
+version: "2.1"
 
 orbs:
   node: circleci/node@5.1.0
@@ -7,11 +7,21 @@ commands:
   install-trivy:
     steps:
       - run: curl -fSsLo trivy.deb https://github.com/aquasecurity/trivy/releases/download/v0.38.3/trivy_0.38.3_Linux-64bit.deb && sudo dpkg -i trivy.deb && rm trivy.deb
+  pre-commit:
+    steps:
+      - checkout
+      - run: sudo pip install --upgrade pip setuptools
+      - run: pip install . -r requirements-dev.txt
+      - node/install:
+          install-yarn: false
+          node-version: "18.14.0"
+      - run: npm install
+      - run: SKIP=detect-aws-credentials pre-commit run --all-files
   combined_test:
     steps:
       - node/install:
           install-yarn: false
-          node-version: '18.14.0'
+          node-version: "18.14.0"
       - checkout
       - run: npm install
       - run: sudo pip install --upgrade pip setuptools
@@ -24,7 +34,7 @@ commands:
       - checkout
       - run: sudo pip install --upgrade pip setuptools
       - run: pip install . -r requirements-dev.txt
-      - run: pytest ./test/python --junitxml=junit-results.xml
+      - run: PYTHONPATH=src/python pytest ./test/python --junitxml=junit-results.xml
       - store_test_results:
           path: junit-results.xml
   node_test:
@@ -36,6 +46,11 @@ commands:
           path: junit-results.xml
 
 jobs:
+  pre-commit:
+    docker:
+      - image: circleci/python:3.10
+    steps:
+      - pre-commit
   combined_test:
     docker:
       - image: circleci/python:3.10
@@ -65,6 +80,7 @@ jobs:
 workflows:
   main:
     jobs:
+      - pre-commit
       - combined_test
       - node_test
       - python_test

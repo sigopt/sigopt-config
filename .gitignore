@@ -8,7 +8,7 @@ node_modules/
 junit.xml
 artifacts/
 
-# virtual environments
+# virtualenv
 .venv/
 venv/
 
