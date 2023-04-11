@@ -44,10 +44,12 @@ class TestConfigBroker(object):
       },
     }
 
-    broker = ConfigBroker.from_configs([
-      dict1,
-      dict2,
-    ])
+    broker = ConfigBroker.from_configs(
+      [
+        dict1,
+        dict2,
+      ]
+    )
 
     assert broker.get("a.a1", default=None) == 1
     assert broker.get("a.a2", default=None) is True
@@ -93,10 +95,12 @@ class TestConfigBroker(object):
       },
     }
 
-    broker = ConfigBroker.from_configs([
-      dict1,
-      dict2,
-    ])
+    broker = ConfigBroker.from_configs(
+      [
+        dict1,
+        dict2,
+      ]
+    )
 
     assert broker.get("a") == {"a1": 1, "a2": True, "a3": "aaa"}
     assert broker.get("b") == {"b1": 3, "b2": False, "b3": "bbb"}

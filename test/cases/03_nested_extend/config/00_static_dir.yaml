@@ -1,4 +1,4 @@
 web:
   static_routes:
-    "/static/a": 
+    "/static/a":
       dir: artifacts/web/static
