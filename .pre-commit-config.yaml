@@ -45,6 +45,7 @@ repos:
     hooks:
       - id: mypy
         additional_dependencies:
+          - types-PyYAML>=6.0.12.9,<7
           - types-requests>=2.25.0,<3
           - types-urllib3>=1.26.25.10,<2
   - repo: https://github.com/sigopt/black.git

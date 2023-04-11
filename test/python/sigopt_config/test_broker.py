@@ -18,7 +18,7 @@ class TestConfigBroker(object):
 
     assert broker.get("fake.key") is None
     with pytest.raises(KeyError):
-      broker["fake.key"]
+      broker["fake.key"]  # pylint: disable=pointless-statement
 
   def test_exists(self):
     dict1 = {
@@ -57,14 +57,14 @@ class TestConfigBroker(object):
     assert broker.get("a.a4", default=None) is None
     assert broker.get("a.a4", default="xyz") == "xyz"
     with pytest.raises(KeyError):
-      broker["a.a4"]
+      broker["a.a4"]  # pylint: disable=pointless-statement
 
     assert broker.get("b.b1", default=None) == 3
     assert broker.get("b.b2", default=None) is False
     assert broker.get("b.b3", default=None) == "bbb"
     assert broker.get("b.b4", default="xyz") == "xyz"
     with pytest.raises(KeyError):
-      broker["b.b4"]
+      broker["b.b4"]  # pylint: disable=pointless-statement
 
     assert broker.get("c.conflict", default=None) is True
     assert broker.get("c.conflict_none") is None

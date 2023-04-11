@@ -2,7 +2,6 @@
 #
 # SPDX-License-Identifier: Apache License 2.0
 import functools
-import json
 import os
 
 import jmespath
@@ -29,7 +28,7 @@ class ConfigBroker(object):
 
   def __contains__(self, name):
     try:
-      self[name]
+      self[name]  # pylint: disable=pointless-statement
       return True
     except KeyError:
       return False
