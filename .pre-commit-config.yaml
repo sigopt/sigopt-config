@@ -1,0 +1,76 @@
+ci:
+  skip: [detect-aws-credentials, eslint, pylint]
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks.git
+    rev: v4.4.0
+    hooks:
+      - id: no-commit-to-branch
+        args: [--branch=main]
+      - id: check-merge-conflict
+      - id: detect-aws-credentials
+      - id: detect-private-key
+      - id: check-added-large-files
+        args: [--maxkb=128]
+      - id: check-ast
+      - id: check-toml
+      - id: check-yaml
+      - id: debug-statements
+      - id: end-of-file-fixer
+      - id: mixed-line-ending
+        args: [--fix=lf]
+      - id: requirements-txt-fixer
+      - id: trailing-whitespace
+  - repo: https://github.com/PyCQA/bandit.git
+    rev: "1.7.5"
+    hooks:
+      - id: bandit
+        args: [-q, -c, pyproject.toml]
+        additional_dependencies: [tomli]
+  - repo: https://github.com/sigopt/sigopt-tools.git
+    rev: "v0.0.1"
+    hooks:
+      - id: copyright-license-disclaimer
+        args: ["--license=Apache License 2.0", "--owner=Intel Corporation"]
+      - id: sigoptlint-python
+  - repo: https://github.com/PyCQA/isort.git
+    rev: "5.12.0"
+    hooks:
+      - id: isort
+  - repo: https://github.com/pycqa/flake8.git
+    rev: 6.0.0
+    hooks:
+      - id: flake8
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: "v1.1.1"
+    hooks:
+      - id: mypy
+        additional_dependencies:
+          - types-requests>=2.25.0,<3
+          - types-urllib3>=1.26.25.10,<2
+  - repo: https://github.com/sigopt/black.git
+    rev: sigopt-22.10.0
+    hooks:
+      - id: black
+  - repo: local
+    hooks:
+      - id: eslint
+        name: eslint
+        entry: npx eslint
+        args: [--fix]
+        description: "An AST-based pattern checker for JavaScript."
+        language: system
+        types: [javascript]
+      - id: pylint
+        name: pylint
+        entry: env PYTHONPATH=./test pylint
+        language: system
+        types: [python]
+        args: ["-rn", "-sn"]
+  - repo: https://github.com/pre-commit/mirrors-prettier.git
+    rev: "v3.0.0-alpha.6"
+    hooks:
+      - id: prettier
+        additional_dependencies:
+          - import-sort-style-renke
+          - prettier
+          - prettier-plugin-import-sort

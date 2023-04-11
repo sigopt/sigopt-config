@@ -52,7 +52,7 @@ const setDottedNameFromObject = (object, key, value) => {
   const base = _.reduce(
     prefix,
     (memo, part) => {
-      memo[part] = memo[part] || {};
+      memo[part] ||= {};
       if (memo[part] === NOT_AVAILABLE) {
         throw new ConfigBrokerValueNotAvailableException(key);
       }

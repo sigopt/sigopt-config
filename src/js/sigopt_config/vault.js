@@ -8,14 +8,12 @@ import _ from "underscore";
 import fs from "fs";
 // eslint-disable-next-line import/no-unresolved
 import got from "got";
-import os from "os";
 import promisify from "es6-promisify";
 
 import ObjectSource from "./object";
-import {SigoptError, HttpError} from "./exceptions";
-import {compactObject} from "./utils";
 import {AWS_METADATA_URL} from "./constants";
-
+import {HttpError, SigoptError} from "./exceptions";
+import {compactObject} from "./utils";
 
 export default class VaultSource {
   constructor(options) {
@@ -35,7 +33,12 @@ export default class VaultSource {
       .then((cache) => {
         this._underlying = cache;
       })
-      .then(() => new Promise((s, e) => this._underlying.initialize(s, e)))
+      .then(
+        () =>
+          new Promise((s, e) => {
+            this._underlying.initialize(s, e);
+          }),
+      )
       .then(success, error);
   }
 

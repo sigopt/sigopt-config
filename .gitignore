@@ -8,6 +8,10 @@ node_modules/
 junit.xml
 artifacts/
 
+# virtualenv
+.venv/
+venv/
+
 # setup.cfg
 build/
 *egg-info*

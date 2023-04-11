@@ -82,7 +82,7 @@ class EnvironmentConfigBrokerSource(DecoratorConfigBrokerSource):
     super().__init__(MutableConfigBrokerSource())
     for k, v in os.environ.items():
       if k.startswith(self.PREFIX):
-        k = k[len(self.PREFIX):]
+        k = k[len(self.PREFIX) :]
         self.underlying.set_item(k, v)
 
 
