@@ -1,5 +1,5 @@
 {
-  "name": "sigopt_config",
+  "name": "sigopt-config",
   "version": "2.0.0-dev1",
   "main": "src/js/sigopt_config/index.js",
   "dependencies": {
