@@ -46,6 +46,6 @@ export class ConfigBroker {
 
   get(key, defaultValue) {
     const value = jmespath.search(this.data, key);
-    return typeof value === "undefined" ? defaultValue : value;
+    return value === undefined || value === null ? defaultValue : value;
   }
 }
