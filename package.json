@@ -1,4 +1,6 @@
 {
+  "name": "sigopt-config",
+  "version": "2.0.0-dev1",
   "dependencies": {
     "jmespath": "^0.16.0",
     "json-merge-patch": "^1.0.2",
@@ -35,7 +37,7 @@
       "style": "renke"
     }
   },
-  "license": "UNLICENSED",
+  "license": "Apache-2.0",
   "name": "sigopt-config",
   "private": true,
   "repository": "https://github.com/sigopt/sigopt-config.git",
