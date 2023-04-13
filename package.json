@@ -1,6 +1,7 @@
 {
-  "name": "sigopt-config",
+  "name": "sigopt_config",
   "version": "2.0.0-dev1",
+  "main": "src/js/sigopt_config",
   "dependencies": {
     "jmespath": "^0.16.0",
     "json-merge-patch": "^1.0.2",
