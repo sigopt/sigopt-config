@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 import readline from "readline";
 
-import ConfigBroker from "../src/js/sigopt_config/broker";
+import {ConfigBroker} from "../src/js/sigopt_config/broker";
 
 const readlineInterface = readline.createInterface({
   input: process.stdin,

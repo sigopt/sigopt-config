@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: Apache License 2.0
  */
 
-import ConfigBroker from "../broker";
+import {ConfigBroker} from "../broker";
 
 const source1 = {a: {b: "c", d: "e"}};
 const source2 = {a: {b: "f", y: "z"}};
