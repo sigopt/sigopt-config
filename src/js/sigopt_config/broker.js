@@ -14,7 +14,7 @@ import {parse as parseYAML} from "yaml";
 const readYAMLFile = (filepath) =>
   parseYAML(fs.readFileSync(filepath).toString());
 
-class ConfigBroker {
+export class ConfigBroker {
   static fromConfigs(configs) {
     const reversed = [...configs];
     reversed.reverse();
@@ -49,5 +49,3 @@ class ConfigBroker {
     return typeof value === "undefined" ? defaultValue : value;
   }
 }
-
-export default ConfigBroker;
