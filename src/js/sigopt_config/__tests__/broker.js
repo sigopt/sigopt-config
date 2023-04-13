@@ -21,4 +21,11 @@ describe("ConfigBroker", () => {
       y: "z",
     });
   });
+  it("supports default values", () => {
+    const broker = new ConfigBroker({a: {b: 0}});
+    expect(broker.get("a", {})).toEqual({b: 0});
+    expect(broker.get("a.b", 1)).toEqual(0);
+    expect(broker.get("c", 1)).toEqual(1);
+    expect(broker.get("c.d", 1)).toEqual(1);
+  });
 });
