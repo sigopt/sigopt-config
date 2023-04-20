@@ -19,7 +19,6 @@ commands:
   pylint:
     steps:
       - checkout
-      - run: pip install pre-commit
       - run: sudo pip install --upgrade pip setuptools
       - run: pip install . -r requirements-dev.txt
       - run: pre-commit run pylint --all-files
