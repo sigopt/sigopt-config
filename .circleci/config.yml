@@ -7,16 +7,22 @@ commands:
   install-trivy:
     steps:
       - run: curl -fSsLo trivy.deb https://github.com/aquasecurity/trivy/releases/download/v0.38.3/trivy_0.38.3_Linux-64bit.deb && sudo dpkg -i trivy.deb && rm trivy.deb
-  pre-commit:
+  eslint:
     steps:
       - checkout
-      - run: sudo pip install --upgrade pip setuptools
-      - run: pip install . -r requirements-dev.txt
+      - run: pip install pre-commit
       - node/install:
           install-yarn: false
           node-version: "18.14.0"
       - run: npm install
-      - run: SKIP=detect-aws-credentials pre-commit run --all-files
+      - run: pre-commit run eslint --all-files
+  pylint:
+    steps:
+      - checkout
+      - run: pip install pre-commit
+      - run: sudo pip install --upgrade pip setuptools
+      - run: pip install . -r requirements-dev.txt
+      - run: pre-commit run pylint --all-files
   python_test:
     steps:
       - checkout
@@ -30,11 +36,16 @@ commands:
       - run: JEST_JUNIT_OUTPUT=junit-results/jest/junit.xml ./node_modules/jest/bin/jest.js --reporters=default --reporters=jest-junit --runInBand --ci
 
 jobs:
-  pre-commit:
+  eslint:
     docker:
       - image: circleci/python:3.10
     steps:
-      - pre-commit
+      - eslint
+  pylint:
+    docker:
+      - image: circleci/python:3.10
+    steps:
+      - pylint
   python_test:
     docker:
       - image: circleci/python:3.10
@@ -60,6 +71,7 @@ workflows:
   main:
     jobs:
       - node_test
-      - pre-commit
+      - eslint
+      - pylint
       - python_test
       - trivy-scan-project
