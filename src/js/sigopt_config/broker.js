@@ -30,7 +30,7 @@ class ConfigBroker {
       delete data.extends;
       sources.push(new ObjectSource(data));
       if (isDefinedAndNotNull(extend)) {
-        let basedir = process.env.sigopt_api_config_dir || "./config";
+        let basedir = process.env.SIGOPT_DEPLOY_CONFIG_DIR || "./config";
         if (extend.startsWith("./") || extend.startsWith("../")) {
           basedir = path.dirname(original);
         }
