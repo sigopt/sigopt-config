@@ -27,7 +27,7 @@ repos:
         args: [-q, -c, pyproject.toml]
         additional_dependencies: [tomli]
   - repo: https://github.com/sigopt/sigopt-tools.git
-    rev: "v0.0.1"
+    rev: "v0.0.2"
     hooks:
       - id: copyright-license-disclaimer
         args: ["--license=Apache License 2.0", "--owner=Intel Corporation"]
@@ -41,7 +41,7 @@ repos:
     hooks:
       - id: flake8
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: "v1.1.1"
+    rev: "v1.2.0"
     hooks:
       - id: mypy
         additional_dependencies:
@@ -71,6 +71,7 @@ repos:
     hooks:
       - id: prettier
         additional_dependencies:
+          - "@babel/preset-env"
           - import-sort-style-renke
           - prettier
           - prettier-plugin-import-sort
