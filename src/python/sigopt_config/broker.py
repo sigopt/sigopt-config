@@ -16,9 +16,9 @@ from sigopt_config.vault_secrets.source import create_vault_source
 
 
 _NO_DEFAULT = object()
-DEFAULT_SIGOPT_CONFIG_ENV_KEY = "sigopt_api_config_file"
+DEFAULT_SIGOPT_CONFIG_ENV_KEY = "SIGOPT_CONFIG_FILE"
 DEFAULT_SIGOPT_CONFIG_DIR = "./config"
-SIGOPT_CONFIG_DIR_ENV_KEY = "sigopt_api_config_dir"
+SIGOPT_CONFIG_DIR_ENV_KEY = "SIGOPT_DEPLOY_CONFIG_DIR"
 
 
 class ConfigBroker(object):
