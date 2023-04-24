@@ -67,7 +67,7 @@ repos:
         types: [python]
         args: ["-rn", "-sn"]
   - repo: https://github.com/pre-commit/mirrors-prettier.git
-    rev: "v3.0.0-alpha.6"
+    rev: "v3.0.0-alpha.9-for-vscode"
     hooks:
       - id: prettier
         additional_dependencies:
