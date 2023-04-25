@@ -6,7 +6,7 @@
     "jmespath": "^0.16.0",
     "json-merge-patch": "^1.0.2",
     "underscore": "^1.12.1",
-    "yaml": "^2.2.1"
+    "yaml": "^2.2.2"
   },
   "devDependencies": {
     "@babel/core": "^7.21.4",
