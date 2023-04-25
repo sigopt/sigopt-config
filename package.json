@@ -1,11 +1,16 @@
 {
+  "name": "sigopt-config",
+  "version": "2.0.0-dev1",
+  "main": "src/js/sigopt_config/index.js",
   "dependencies": {
-    "es6-promisify": "^5.0.0",
-    "got": "^12.5.3",
-    "lodash": "^4.17.19",
-    "underscore": "^1.12.1"
+    "jmespath": "^0.16.0",
+    "json-merge-patch": "^1.0.2",
+    "underscore": "^1.12.1",
+    "yaml": "^2.2.1"
   },
   "devDependencies": {
+    "@babel/core": "^7.21.4",
+    "@babel/node": "^7.20.7",
     "@babel/eslint-parser": "^7.21.3",
     "@babel/eslint-plugin": "^7.19.1",
     "@babel/preset-env": "^7.0.0",
@@ -20,6 +25,9 @@
     "jest-junit": "^14.0.1"
   },
   "jest": {
+    "moduleNameMapper": {
+      "^yaml$": "<rootDir>/node_modules/yaml/dist"
+    },
     "reporters": [
       "default",
       "jest-junit"
@@ -30,7 +38,7 @@
       "style": "renke"
     }
   },
-  "license": "UNLICENSED",
+  "license": "Apache-2.0",
   "name": "sigopt-config",
   "private": true,
   "repository": "https://github.com/sigopt/sigopt-config.git",

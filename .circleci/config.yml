@@ -1,4 +1,4 @@
-version: 2.1
+version: "2.1"
 
 orbs:
   node: circleci/node@5.1.0
@@ -22,17 +22,33 @@ commands:
       - run: sudo pip install --upgrade pip setuptools
       - run: pip install . -r requirements-dev.txt
       - run: pre-commit run pylint --all-files
+  combined_test:
+    steps:
+      - node/install:
+          install-yarn: false
+          node-version: "18.14.0"
+      - checkout
+      - run: npm install
+      - run: sudo pip install --upgrade pip setuptools
+      - run: pip install . -r requirements-dev.txt
+      - run: pytest test/config_test.py --junitxml=junit-results.xml
+      - store_test_results:
+          path: junit-results.xml
   python_test:
     steps:
       - checkout
       - run: sudo pip install --upgrade pip setuptools
       - run: pip install . -r requirements-dev.txt
-      - run: PYTHONPATH=src/python pytest ./test/python
+      - run: PYTHONPATH=src/python pytest ./test/python --junitxml=junit-results.xml
+      - store_test_results:
+          path: junit-results.xml
   node_test:
     steps:
       - checkout
       - run: npm install
-      - run: JEST_JUNIT_OUTPUT=junit-results/jest/junit.xml ./node_modules/jest/bin/jest.js --reporters=default --reporters=jest-junit --runInBand --ci
+      - run: JEST_JUNIT_OUTPUT=junit-results.xml npx jest --reporters=default --reporters=jest-junit --runInBand --ci
+      - store_test_results:
+          path: junit-results.xml
 
 jobs:
   eslint:
@@ -45,6 +61,11 @@ jobs:
       - image: circleci/python:3.10
     steps:
       - pylint
+  combined_test:
+    docker:
+      - image: circleci/python:3.10
+    steps:
+      - combined_test
   python_test:
     docker:
       - image: circleci/python:3.10
@@ -69,6 +90,7 @@ jobs:
 workflows:
   main:
     jobs:
+      - combined_test
       - node_test
       - eslint
       - pylint

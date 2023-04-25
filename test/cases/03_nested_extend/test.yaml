@@ -1,0 +1,4 @@
+- key: web.static_routes
+  expected: {"/static/a": {"cacheAgeHours": 1, "dir": "artifacts/web/static"}}
+- key: web.static_routes."/static/a"
+  expected: {"cacheAgeHours": 1, "dir": "artifacts/web/static"}

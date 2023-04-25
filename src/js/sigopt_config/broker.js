@@ -6,105 +6,46 @@
 
 import _ from "underscore";
 import fs from "fs";
+import jmespath from "jmespath";
+import jsonMergePatch from "json-merge-patch";
 import path from "path";
+import {parse as parseYAML} from "yaml";
 
-import EnvironmentSource from "./env";
-import ObjectSource from "./object";
-import VaultSource from "./vault";
-import {coalesce, isDefinedAndNotNull, isJsObject} from "./utils";
+const readYAMLFile = (filepath) =>
+  parseYAML(fs.readFileSync(filepath).toString());
 
-class ConfigBroker {
-  constructor(sources, vaultSecretKeys) {
-    this._sources = sources;
-    this._vaultSecretKeys = vaultSecretKeys;
+export class ConfigBroker {
+  static fromConfigs(configs) {
+    const reversed = [...configs];
+    reversed.reverse();
+    const data = _.reduce(reversed, jsonMergePatch.apply, {});
+    return new ConfigBroker(data);
   }
 
-  static fromFile(config, vaultSecretKeys) {
-    const sources = [];
-    let extend = config;
-    while (isDefinedAndNotNull(extend)) {
-      extend = path.resolve(extend);
-      const data = JSON.parse(fs.readFileSync(extend));
-      const original = extend;
-      extend = data.extends;
-      delete data.extends;
-      sources.push(new ObjectSource(data));
-      if (isDefinedAndNotNull(extend)) {
-        let basedir = process.env.SIGOPT_DEPLOY_CONFIG_DIR || "./config";
-        if (extend.startsWith("./") || extend.startsWith("../")) {
-          basedir = path.dirname(original);
+  static fromDirectory(dir) {
+    return new Promise((success, error) => {
+      fs.readdir(dir, (err, files) => {
+        if (err) {
+          return error(err);
         }
-        extend = path.join(basedir, extend);
-      }
-    }
-    sources.push(new EnvironmentSource());
-    return new ConfigBroker(sources, vaultSecretKeys);
-  }
-
-  initialize(success, error) {
-    const init = (sources) => {
-      if (_.isEmpty(sources)) {
-        return this._maybeAddVault(success, error);
-      } else {
-        return sources[0].initialize(_.partial(init, sources.slice(1)), error);
-      }
-    };
-    init(this._sources);
-  }
-
-  get(key, defaultValue = undefined) {
-    return this._ensureSafeReturn(
-      coalesce(
-        _.reduce(
-          this._sources,
-          (memo, source) => (memo === undefined ? source.get(key) : memo),
-          undefined,
-        ),
-        defaultValue,
-      ),
-    );
-  }
-
-  _ensureSafeReturn(value) {
-    if (isJsObject(value)) {
-      throw new Error(
-        "Possibly unsafe .get of JSON object, values might be missing." +
-          " Please use .getObject instead",
-      );
-    }
-    return value;
-  }
-
-  getObject(key, defaultValue = undefined) {
-    const values = _.without(
-      _.map(this._sources, (source) => source.get(key)),
-      undefined,
-    );
-    values.reverse();
-    return _.isEmpty(values) ? defaultValue : _.extend({}, ...values);
-  }
-
-  _maybeAddVault(success, error) {
-    if (this.get("vault.enabled")) {
-      const source = new VaultSource({
-        engine: this.get("vault.engine"),
-        host: this.get("vault.host"),
-        keyPrefix: this.get("vault.key_prefix"),
-        noncePath: this.get("vault.nonce_path"),
-        // NOTE: vault.token is not specified in prod, but can be included for dev
-        token: this.get("vault.token"),
-        vaultSecretKeys: this._vaultSecretKeys,
+        files.sort();
+        let configs;
+        try {
+          configs = _.map(files, (file) => readYAMLFile(path.join(dir, file)));
+        } catch (e) {
+          return error(e);
+        }
+        return success(ConfigBroker.fromConfigs(configs));
       });
-      this._sources.push(source);
-      return source.initialize(success, error);
-    } else {
-      return success();
-    }
+    });
   }
 
-  allConfigsForLogging() {
-    return _.map(this._sources, (source) => source.allConfigsForLogging());
+  constructor(data) {
+    this.data = data;
+  }
+
+  get(key, defaultValue) {
+    const value = jmespath.search(this.data, key);
+    return value === undefined || value === null ? defaultValue : value;
   }
 }
-
-export default ConfigBroker;

@@ -4,57 +4,28 @@
  * SPDX-License-Identifier: Apache License 2.0
  */
 
-import ConfigBroker from "../broker";
-import ObjectSource from "../object";
-import {ConfigBrokerValueNotAvailableException} from "../exceptions";
-import {NOT_AVAILABLE} from "../constants";
+import {ConfigBroker} from "../broker";
 
-const source1 = new ObjectSource({a: {b: "c", d: "e"}});
-const source2 = new ObjectSource({a: {b: "f", y: "z"}});
-source1.setNotAvailable("not.available");
+const source1 = {a: {b: "c", d: "e"}};
+const source2 = {a: {b: "f", y: "z"}};
 
 describe("ConfigBroker", () => {
-  it("fetches from multiple sources", (done) => {
-    const broker = new ConfigBroker([source1, source2]);
-    broker.initialize(() => {
-      expect(broker.get("a.b")).toEqual("c");
-      expect(broker.get("a.d")).toEqual("e");
-      expect(broker.get("a.y")).toEqual("z");
-      expect(() => broker.get("not.available")).toThrow(
-        ConfigBrokerValueNotAvailableException,
-      );
-      expect(() => broker.get("not.available.subkey")).toThrow(
-        ConfigBrokerValueNotAvailableException,
-      );
-      expect(() => broker.getObject("not.available")).toThrow(
-        ConfigBrokerValueNotAvailableException,
-      );
-      expect(() => broker.getObject("not")).toThrow(
-        ConfigBrokerValueNotAvailableException,
-      );
-      expect(broker.getObject("a")).toEqual({
-        b: "c",
-        d: "e",
-        y: "z",
-      });
-      expect(broker.allConfigsForLogging()).toEqual([
-        {
-          a: {
-            b: "c",
-            d: "e",
-          },
-          not: {
-            available: NOT_AVAILABLE,
-          },
-        },
-        {
-          a: {
-            b: "f",
-            y: "z",
-          },
-        },
-      ]);
-      done();
-    }, done.fail);
+  it("fetches from multiple sources", () => {
+    const broker = ConfigBroker.fromConfigs([source1, source2]);
+    expect(broker.get("a.b")).toEqual("c");
+    expect(broker.get("a.d")).toEqual("e");
+    expect(broker.get("a.y")).toEqual("z");
+    expect(broker.get("a")).toEqual({
+      b: "c",
+      d: "e",
+      y: "z",
+    });
+  });
+  it("supports default values", () => {
+    const broker = new ConfigBroker({a: {b: 0}});
+    expect(broker.get("a", {})).toEqual({b: 0});
+    expect(broker.get("a.b", 1)).toEqual(0);
+    expect(broker.get("c", 1)).toEqual(1);
+    expect(broker.get("c.d", 1)).toEqual(1);
   });
 });

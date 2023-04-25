@@ -1,0 +1,12 @@
+- key: a
+  expected: null
+- key: b
+  expected: 1
+- key: c
+  expected: 1
+- key: d
+  expected: null
+- key: d.a
+  expected: null
+- key: d.b
+  expected: null
