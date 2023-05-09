@@ -1,0 +1,29 @@
+name: tests
+run-name: Tests for ${{ github.repository }}@${{ github.ref }}
+on:
+  push: {}
+jobs:
+  combined:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+      - run: npm install
+      - run: sudo pip install --upgrade pip setuptools
+      - run: pip install . -r requirements-dev.txt
+      - run: pytest test/config_test.py --junitxml=junit-results.xml
+  python:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+      - run: sudo pip install --upgrade pip setuptools
+      - run: pip install . -r requirements-dev.txt
+      - run: PYTHONPATH=src/python pytest ./test/python --junitxml=junit-results.xml
+  node:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+      - run: npm install
+      - run: npx jest --reporters=default --runInBand --ci
