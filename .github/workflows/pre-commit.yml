@@ -11,7 +11,7 @@ jobs:
       - run: npm install
       - run: pip install pre-commit
       - run: pre-commit run eslint --all-files
-  python:
+  pylint:
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository code
