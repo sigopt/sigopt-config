@@ -90,7 +90,7 @@ class VaultClient(object):
       },
     )
     if response.status_code >= 400:
-      raise requests.exceptions.HTTPError(response.text, response=response)
+      raise requests.exceptions.HTTPError(f"path='{path}' :: " + response.text, response=response)
     assert response.status_code in (HTTPStatus.OK, HTTPStatus.NO_CONTENT)
     if response.status_code == HTTPStatus.NO_CONTENT:
       return {}
