@@ -2,7 +2,10 @@
 __pycache__/
 *.py[cod]
 .pytest_cache/
+
+# npm artifacts
 node_modules/
+package-lock.json
 
 # local testing output
 junit.xml
