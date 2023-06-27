@@ -10,16 +10,9 @@ jobs:
     steps:
       - name: Check out repository code
         uses: actions/checkout@v3
-      - run: curl -fSsLo trivy.deb https://github.com/aquasecurity/trivy/releases/download/v0.41.0/trivy_0.41.0_Linux-64bit.deb && sudo dpkg -i trivy.deb && rm trivy.deb
-      - run: mkdir -p artifacts/trivy && trivy fs . --debug
-      - uses: actions/upload-artifact@v3
-        if: always()
+      - name: Run Trivy
+        uses: aquasecurity/trivy-action@master
         with:
-          name: trivy-results
-          path: artifacts/trivy/
-  yarn-audit:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out repository code
-        uses: actions/checkout@v3
-      - run: yarn audit
+          scan-type: fs
+          scan-ref: .
+          trivy-config: trivy.yaml
