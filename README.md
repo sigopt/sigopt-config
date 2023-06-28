@@ -31,4 +31,4 @@ This algorithm has the following desirable properties:
 - Configuration files can be organized according to their purpose
 - File precedence can be set by using appropriate filename prefixes
 - Nested objects are merged together predictably
-- Simple to implement consistenly in multiple languages provided the language has a YAML parser and JSON Merge Patch implementation
+- Easy to create a consistent implementation in a new language provided the language has a YAML parser and JSON Merge Patch implementation
