@@ -4,6 +4,11 @@ Copyright © 2023 Intel Corporation
 SPDX-License-Identifier: MIT
 -->
 
+[![pre-commit.ci status](https://results.pre-commit.ci/badge/github/sigopt/sigopt-config/main.svg)](https://results.pre-commit.ci/latest/github/sigopt/sigopt-config/main)
+![pre-commit](https://github.com/sigopt/sigopt-config/actions/workflows/pre-commit.yml/badge.svg)
+![security](https://github.com/sigopt/sigopt-config/actions/workflows/documentation.yml/badge.svg)
+![tests](https://github.com/sigopt/sigopt-config/actions/workflows/integration.yml/badge.svg)
+
 # Sigopt-Config
 
 Sigopt-Config is an open-source tool for managing configuration for SigOpt deployments from [sigopt-server](https://github.com/sigopt/sigopt-server).
