@@ -1,4 +1,5 @@
 name: tests
+permissions: read-all
 run-name: Tests for ${{ github.repository }}@${{ github.ref }}
 on:
   push: {}
