@@ -4,6 +4,7 @@ Copyright © 2023 Intel Corporation
 SPDX-License-Identifier: MIT
 -->
 
+[![OpenSSF Scorecard](https://api.securityscorecards.dev/projects/github.com/sigopt/sigopt-config/badge)](https://securityscorecards.dev/viewer/?uri=github.com/sigopt/sigopt-config)
 [![pre-commit.ci status](https://results.pre-commit.ci/badge/github/sigopt/sigopt-config/main.svg)](https://results.pre-commit.ci/latest/github/sigopt/sigopt-config/main)
 ![pre-commit](https://github.com/sigopt/sigopt-config/actions/workflows/pre-commit.yml/badge.svg)
 ![security](https://github.com/sigopt/sigopt-config/actions/workflows/security.yml/badge.svg)
