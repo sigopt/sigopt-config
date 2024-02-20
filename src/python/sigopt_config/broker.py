@@ -26,8 +26,7 @@ class ConfigBroker(object):
     configs = []
     for config_path in sorted(os.listdir(dirname)):
       with open(os.path.join(dirname, config_path)) as config_fp:
-        data = yaml.safe_load(config_fp)
-        if data is None:
+        if (data := yaml.safe_load(config_fp)) is None:
           continue
         if not isinstance(data, dict):
           raise TypeError(f"Top level of config is not a mapping: {config_fp.name}")
@@ -51,7 +50,6 @@ class ConfigBroker(object):
       return default
 
   def __getitem__(self, name: str) -> Any:
-    value = jmespath.search(name, self.data)
-    if value is None:
+    if (value := jmespath.search(name, self.data)) is None:
       raise KeyError(name)
     return value
