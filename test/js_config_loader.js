@@ -62,7 +62,7 @@ const readConfigBroker = ({key}) => {
 const resetConfigBroker = () => {
   dispatchP = dispatchP.then(() => {
     configBroker = null;
-    console.log(JSON.stringify({message: "Reset the broket, ready to load"}));
+    console.log(JSON.stringify({message: "Reset the broker, ready to load"}));
   });
 };
 
