@@ -8,7 +8,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - run: npm install
       - run: pip install pre-commit
       - run: pre-commit run eslint --all-files
@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Check out repository code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - run: sudo pip install --upgrade pip setuptools
       - run: pip install . -r requirements-dev.txt
       - run: pre-commit run pylint --all-files
