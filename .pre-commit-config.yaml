@@ -21,7 +21,7 @@ repos:
       - id: requirements-txt-fixer
       - id: trailing-whitespace
   - repo: https://github.com/PyCQA/bandit.git
-    rev: "1.7.9"
+    rev: "1.7.10"
     hooks:
       - id: bandit
         args: [-q, -c, pyproject.toml]
